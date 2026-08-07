@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>Report Lost Item — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="report-lost">
+  <header id="global-nav"></header>
+
+  <div class="page-head">
+    <div class="container">
+      <span class="page-eyebrow">Report</span>
+      <h1>Report a Lost Item</h1>
+      <p>Tell us what you lost and where — we'll do the rest. Your report goes to our office for verification.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding:28px 20px">
+    <div class="form-card wide">
+      <h2>Lost Item Details</h2>
+      <p class="form-sub">Fields marked <span style="color:var(--danger)">*</span> are required.</p>
+      <form id="report-form" novalidate>
+        <div class="form-section">
+          <h3 class="form-section-title">About the Item</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="f-name">Item Name <span class="req">*</span></label>
+              <input type="text" name="name" id="f-name" placeholder="e.g. MacBook Pro 14&quot;" required>
+              <span class="field-error">Please enter the item name.</span>
+            </div>
+            <div class="form-group">
+              <label for="f-category">Category <span class="req">*</span></label>
+              <select name="category" id="f-category" required></select>
+            </div>
+            <div class="form-group">
+              <label for="f-brand">Brand</label>
+              <input type="text" name="brand" id="f-brand" placeholder="e.g. Apple, Nike...">
+            </div>
+            <div class="form-group">
+              <label for="f-color">Color</label>
+              <input type="text" name="color" id="f-color" placeholder="e.g. Silver, Black">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Where &amp; When</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-location">Location Lost <span class="req">*</span></label>
+              <input type="text" name="location" id="f-location" placeholder="e.g. Main Library, 2nd floor" required>
+              <span class="field-error">Please enter where you lost the item.</span>
+            </div>
+            <div class="form-group">
+              <label for="f-date">Date Lost <span class="req">*</span></label>
+              <input type="date" name="date" id="f-date" required>
+              <span class="field-error">Please select the date.</span>
+            </div>
+            <div class="form-group">
+              <label for="f-time">Approximate Time</label>
+              <input type="time" name="time" id="f-time">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Describe It</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="f-description">Description</label>
+              <textarea name="description" id="f-description" placeholder="Describe the item — size, condition, what it looks like..."></textarea>
+            </div>
+            <div class="form-group full">
+              <label for="f-identifying">Identifying Features</label>
+              <input type="text" name="identifyingFeatures" id="f-identifying" placeholder="e.g. Fox sticker on lid, small dent on left corner">
+              <span class="hint">Details only the owner would know. These help us verify claims.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Image &amp; Contact</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="f-image">Upload Image</label>
+              <input type="file" name="image" id="f-image" accept="image/*">
+              <span class="hint">Optional. Photos help people recognize your item.</span>
+              <img id="img-preview" alt="Preview" style="display:none;max-height:180px;border-radius:8px;margin-top:8px">
+            </div>
+            <div class="form-group full">
+              <label for="f-contact">Contact Information</label>
+              <input type="text" name="contactInfo" id="f-contact" placeholder="Phone or preferred contact method (kept private)">
+              <span class="hint">Only shown to administrators, never publicly.</span>
+            </div>
+            <div class="form-group full">
+              <label for="f-notes">Additional Notes</label>
+              <textarea name="additionalNotes" id="f-notes" placeholder="Anything else we should know?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">Submit Report</button>
+          <a href="lost-items.html" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="js/app.js"></script>
+  <script src="js/items.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>Login — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="login">
+  <header id="global-nav"></header>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <a href="index.html" class="brand">
+        <span class="brand-icon" aria-hidden="true" data-ico="search"></span>
+        <span>Campus<em>Find</em></span>
+      </a>
+      <h2>Welcome Back</h2>
+      <p class="form-sub">Log in with your school email or ID to continue.</p>
+
+      <form id="login-form" novalidate>
+        <div class="form-group mb-16">
+          <label for="login-identifier">School Email or ID</label>
+          <input type="text" name="identifier" id="login-identifier" placeholder="you@campusfind.edu or STU-2401" autocomplete="username" required>
+          <span class="field-error">Please enter your school email or ID.</span>
+        </div>
+        <div class="form-group mb-16">
+          <label for="login-password">Password</label>
+          <span class="pw-wrap">
+            <input type="password" name="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)" aria-label="Show password" title="Show password"><span data-ico="eye"></span></button>
+          </span>
+          <span class="field-error">Password is required.</span>
+        </div>
+        <div class="auth-links">
+          <label class="checkbox-row" for="login-remember">
+            <input type="checkbox" name="remember" id="login-remember">
+            <span>Remember me</span>
+          </label>
+          <a href="javascript:void(0)" id="forgot-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Log In</button>
+      </form>
+
+<div class="auth-alt">Don't have an account? <a href="register.html">Sign up here</a></div>
+
+      <hr class="divider">
+      <p class="small muted" style="text-align:center;margin-bottom:10px">Demo accounts:</p>
+      <div class="dash-actions" style="justify-content:center">
+        <button class="btn btn-secondary btn-sm" onclick="demoLogin('james.carter@campusfind.edu','student123')">Student</button>
+        <button class="btn btn-secondary btn-sm" onclick="demoLogin('elena.rodriguez@campusfind.edu','staff123')">Staff</button>
+        <button class="btn btn-secondary btn-sm" onclick="demoLogin('admin@campusfind.edu','admin123')">Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

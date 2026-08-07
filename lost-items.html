@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>Lost Items — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="lost">
+  <header id="global-nav"></header>
+
+  <div class="page-head">
+    <div class="container">
+      <span class="page-eyebrow">Browse</span>
+      <h1>Lost Items</h1>
+      <p>Browse everything reported lost across campus. See something of yours? Check the details.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding:28px 20px">
+    <div class="filter-bar">
+      <form id="filter-form">
+        <div class="filter-row">
+          <div class="form-group search-grow">
+            <label for="filter-search">Search</label>
+            <input type="text" id="filter-search" placeholder="Search by name, description, brand, location...">
+          </div>
+          <div class="form-group">
+            <label for="filter-category">Category</label>
+            <select id="filter-category"><option value="all">All Categories</option></select>
+          </div>
+          <div class="form-group">
+            <label for="filter-location">Location</label>
+            <select id="filter-location"><option value="all">All Locations</option></select>
+          </div>
+          <div class="form-group">
+            <label for="filter-status">Status</label>
+            <select id="filter-status">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending Verification</option>
+              <option value="verified">Verified</option>
+              <option value="rejected">Rejected</option>
+              <option value="claim-approved">Claim Approved</option>
+              <option value="returned">Returned</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filter-date">Date</label>
+            <select id="filter-date">
+              <option value="all">Any time</option>
+              <option value="week">Past week</option>
+              <option value="month">Past month</option>
+              <option value="3months">Past 3 months</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filter-sort">Sort by</label>
+            <select id="filter-sort">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="updated">Recently updated</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+          <button type="button" class="btn btn-secondary" id="clear-filters">Clear Filters</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-info">
+      <span id="results-count">0 results</span>
+      <a href="report-lost.html" class="btn btn-primary btn-sm"><span aria-hidden="true" data-ico="reportLost"></span> Report Lost Item</a>
+    </div>
+
+    <div class="cards-grid" id="items-grid"></div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="js/app.js"></script>
+  <script src="js/items.js"></script>
+</body>
+</html>

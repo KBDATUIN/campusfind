@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>How CampusFind Works — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="how">
+  <header id="global-nav"></header>
+
+  <div class="page-head">
+    <div class="container">
+      <span class="page-eyebrow">Learn</span>
+      <h1>How CampusFind Works</h1>
+      <p>Four simple steps to recover what belongs to you.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Report It</h3>
+          <p>Lost something or found an item? Submit a report with a photo and details in under two minutes.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>We Verify</h3>
+          <p>Our lost &amp; found office reviews every report to keep listings accurate and trustworthy.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Find Matches</h3>
+          <p>Our smart matching system compares lost and found reports and flags possible matches.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h3>Claim &amp; Recover</h3>
+          <p>Submit a claim with owner-only details. Once verified, collect your item from the office.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" style="max-width:640px;margin:56px auto 0">
+        <div class="empty-icon" aria-hidden="true" data-ico="search"></div>
+        <h3>Ready to get started?</h3>
+        <p>Create a free account and report or claim your first item in minutes.</p>
+        <div class="dash-actions" style="justify-content:center">
+          <a href="register.html" class="btn btn-primary">Create Account</a>
+          <a href="login.html" class="btn btn-secondary">Log In</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

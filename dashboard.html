@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>My Dashboard — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="dashboard">
+  <header id="global-nav"></header>
+
+  <div class="dash-wrap">
+    <div id="dash-greet"></div>
+
+    <div class="dash-overview">
+      <div class="dash-overview-main">
+        <div id="dash-profile"></div>
+        <div class="dash-grid" id="dash-stats"></div>
+        <div id="dash-sections"></div>
+      </div>
+      <aside class="dash-aside">
+        <section class="dash-aside-card" id="notif-feed"></section>
+        <section class="dash-aside-card">
+          <h3 class="dash-aside-title">Quick Links</h3>
+          <div class="dash-quicklinks">
+            <a href="lost-items.html"><span aria-hidden="true" data-ico="search"></span> Browse Lost Items</a>
+            <a href="found-items.html"><span aria-hidden="true" data-ico="pin"></span> Browse Found Items</a>
+            <a href="report-lost.html"><span aria-hidden="true" data-ico="reportLost"></span> Report a Lost Item</a>
+            <a href="report-found.html"><span aria-hidden="true" data-ico="reportFound"></span> Report a Found Item</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/notifications.js"></script>
+</body>
+</html>

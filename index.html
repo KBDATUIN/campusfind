@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>CampusFind — School Lost &amp; Found System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="home">
+  <header id="global-nav"></header>
+
+  <!-- DASHBOARD HEADER -->
+  <div class="page-head page-head-dash">
+    <div class="container">
+      <span class="page-eyebrow">Campus Home</span>
+      <h1 id="home-welcome">Welcome back</h1>
+      <p>Search campus reports, view the latest lost and found items, or report something you lost or found.</p>
+    </div>
+  </div>
+
+  <main class="container home-dash">
+    <!-- SEARCH + QUICK ACTIONS -->
+    <div class="dash-bar">
+      <form class="dash-search" action="lost-items.html" method="get">
+        <span class="dash-search-ico" aria-hidden="true" data-ico="search"></span>
+        <input type="search" name="q" placeholder="Search for laptops, ID cards, keys, textbooks..." aria-label="Search items">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+      <div class="dash-quick">
+        <a href="report-lost.html" class="btn btn-lost"><span aria-hidden="true" data-ico="reportLost"></span> Report Lost Item</a>
+        <a href="report-found.html" class="btn btn-found"><span aria-hidden="true" data-ico="reportFound"></span> Report Found Item</a>
+      </div>
+    </div>
+
+    <!-- STATISTICS -->
+    <section class="stats-grid stats-grid-home" id="home-stats" aria-label="CampusFind statistics"></section>
+
+    <!-- RECENTLY REPORTED -->
+    <section class="recent-section">
+      <div class="section-head">
+        <div>
+          <h2>Recently Reported</h2>
+          <p>The latest lost and found items around campus.</p>
+        </div>
+        <div class="dash-actions">
+          <a href="lost-items.html" class="btn btn-secondary btn-sm">Browse Lost Items</a>
+          <a href="found-items.html" class="btn btn-secondary btn-sm">Browse Found Items</a>
+        </div>
+      </div>
+      <div class="cards-grid" id="home-recent"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const homeWelcome = document.getElementById("home-welcome");
+    const homeUser = currentUser();
+    if (homeUser) {
+      const first = (homeUser.fullName || "").split(/\s+/)[0];
+      homeWelcome.textContent = first ? `Welcome back, ${first}` : "Welcome back";
+    }
+
+    function renderHomeStats() {
+      const items = Store.all("items");
+      const stats = [
+        { icon: "search", cls: "blue", num: items.filter((i) => i.type === "lost").length, label: "Total Lost Items" },
+        { icon: "reportFound", cls: "green", num: items.filter((i) => i.type === "found").length, label: "Total Found Items" },
+        { icon: "returned", cls: "red", num: items.filter((i) => i.status === "returned").length, label: "Items Returned" },
+        { icon: "clipboard", cls: "amber", num: Store.all("claims").filter((c) => c.status === "pending" || c.status === "investigation").length, label: "Active Claims" },
+      ];
+      document.getElementById("home-stats").innerHTML = stats
+        .map((s) => `<div class="stat-card stat-${s.cls}"><div class="stat-icon ${s.cls}">${ICONS[s.icon] || ""}</div><div><div class="num">${s.num}</div><div class="label">${s.label}</div></div></div>`)
+        .join("");
+    }
+
+    function renderRecent() {
+      const recent = Store.all("items")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 6);
+      document.getElementById("home-recent").innerHTML = recent.length
+        ? recent.map(itemCard).join("")
+        : emptyState("No items yet", "Be the first to report an item on campus.", `<a href="report-lost.html" class="btn btn-primary">Report an Item</a>`);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderHomeStats();
+      renderRecent();
+    });
+  </script>
+</body>
+</html>

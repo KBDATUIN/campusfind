@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233b82f6'/%3E%3Ccircle cx='10.5' cy='10.5' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Cpath d='M14.5 14.5 18 18' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <title>About Us — CampusFind</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="about">
+  <header id="global-nav"></header>
+
+  <div class="page-head">
+    <div class="container">
+      <span class="page-eyebrow">Welcome</span>
+      <h1>About CampusFind</h1>
+      <p>A school-wide lost &amp; found platform built for our community.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="form-card" style="max-width:820px;text-align:center;margin:0 auto">
+        <p>CampusFind is the official digital lost &amp; found for our school. Every year, hundreds of items are lost across campus — textbooks, laptops, ID cards, keys and more. CampusFind makes it easy for students and staff to report items, search listings, and recover what belongs to them, while administrators verify every listing and claim for safety and security.</p>
+        <div class="mt-16 flex-between" style="justify-content:center;gap:20px">
+          <span class="chip role-student"><span aria-hidden="true" data-ico="pin"></span> Campus-wide coverage</span>
+          <span class="chip role-staff"><span aria-hidden="true" data-ico="lock"></span> Verified listings only</span>
+          <span class="chip" style="background:var(--success-soft);color:var(--success)"><span aria-hidden="true" data-ico="check"></span> Free for students</span>
+        </div>
+      </div>
+
+      <div class="steps-grid" style="margin-top:56px">
+        <div class="step-card">
+          <div class="step-num" style="background:var(--primary);color:#fff"><span data-ico="check"></span></div>
+          <h3>Verified Listings</h3>
+          <p>Every report is reviewed by the lost &amp; found office before it goes public, keeping the platform safe and trustworthy.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="background:var(--success);color:#fff"><span data-ico="lock"></span></div>
+          <h3>Privacy First</h3>
+          <p>Contact details are kept private and only shared with administrators and the verified owner of an item.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="background:var(--warning);color:#fff"><span data-ico="pin"></span></div>
+          <h3>Smart Matching</h3>
+          <p>Our matching engine compares lost and found reports across campus and flags possible matches automatically.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="background:var(--purple, #7c3aed);color:#fff"><span data-ico="returned"></span></div>
+          <h3>Recovery, Tracked</h3>
+          <p>From report to return, every item's journey is tracked so you always know what's happening with your things.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" style="max-width:640px;margin:56px auto 0">
+        <div class="empty-icon" aria-hidden="true" data-ico="note"></div>
+        <h3>Our Mission</h3>
+        <p>No lost item should stay lost. We bring students, staff and the school office together to return every item to its owner.</p>
+        <div class="dash-actions" style="justify-content:center">
+          <a href="register.html" class="btn btn-primary">Join CampusFind</a>
+          <a href="lost-items.html" class="btn btn-secondary">Browse Items</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">&copy; <span id="year"></span> CampusFind — School Lost &amp; Found System. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

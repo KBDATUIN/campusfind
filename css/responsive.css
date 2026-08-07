@@ -1,0 +1,299 @@
+/* ============================================================
+   CampusFind — Responsive Styles (mobile-first polish)
+   Breakpoints: <=1100 drawer / <=992 tablet / <=768 mobile / <=480 phones
+   ============================================================ */
+
+/* Prevent iOS font auto-sizing that breaks layout alignment */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Viewport-level overflow guard. iOS Safari ignores overflow on <body>
+     alone, so the guard must also live on <html>. `clip` (with `hidden`
+     as fallback) kills horizontal stretch without breaking position:sticky. */
+  overflow-x: hidden;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Kill accidental horizontal scroll from edge-to-edge hero tokens etc. */
+/* clip (instead of hidden) so position:sticky elements keep working */
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Drawer dark-mode row: hidden on desktop (header toggle exists there),
+   shown on mobile where the header toggle is hidden */
+.side-acct-item.theme-toggle-side { display: none; }
+
+/* Strict wrapper guards (per layout requirements): every flex/grid wrapper
+   stays inside the viewport so the background can never stretch off-screen.
+   min-width:0 lets flex children respect max-width; box-sizing is inherited
+   from the global * rule but restated here for the shell containers. */
+.site-frame,
+.site-main-content,
+.page-head,
+.page-head-dash {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+/* .site-main is offset by the fixed sidebar's margin-left, so it must size
+   itself (flex: 1) instead of forcing width: 100% — forcing 100% plus the
+   margin would overflow the viewport and clip the right side. */
+.site-main {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ============ SIDE NAV DRAWER + MOBILE HEADER (<= 1100px) ============ */
+@media (max-width: 1100px) {
+  .site-header { padding: 0 12px; left: 0; }
+
+  /* Off-canvas drawer. Kept identical to the desktop sidebar (same 240px
+     width, same spacing/alignment) so nothing is cropped, resized or
+     re-proportioned on mobile. */
+  .site-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    /* height:auto + 100vh fallback covers old engines; 100dvh matches the
+       *visible* viewport so the drawer is never cut off behind the
+       browser's bottom bar / home indicator on mobile. */
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    width: 240px;               /* same as desktop */
+    max-width: calc(100vw - 24px);
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.26s ease;
+  }
+  .site-sidebar.open { transform: translateX(0); }
+
+  /* Drawer is off-canvas: the main column must reclaim the full width */
+  .site-main { margin-left: 0; }
+  /* On mobile the header spans the full width (no sidebar shown) and the
+     footer is back to the full width as well. */
+  body.site-layout > footer { margin-left: 0; }
+
+  #sidebar-toggle { display: none; }
+  #nav-toggle-mobile { display: inline-flex; }
+  .brand-name { display: block; }
+  .sidebar-close { display: inline-flex; }
+
+  /* Keep the account rows clear of the browser's bottom bar / iOS home
+     indicator so the last row can never be clipped off-screen. */
+  .side-account { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+
+  /* Let the page title truncate while the header controls stay visible */
+  .header-left { min-width: 0; flex: 1; }
+  .header-title { flex: 1; min-width: 0; }
+  .header-title { font-size: 14px; }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .details-grid { grid-template-columns: 1fr; }
+  .details-img { height: 300px; }
+  .charts-grid { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-content .dash-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .modal { padding: 26px 24px; }
+  .dash-bar { align-items: flex-end; }
+  .details-panel { padding: 24px; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .dash-wrap { padding-left: 16px; padding-right: 16px; }
+
+  /* Single-column stacking per requirements (<768px): greeting card,
+     profile card, stat cards and quick links all stack cleanly */
+  .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stats-grid-home .stat-card { padding: 16px; }
+  .stat-card { padding: 14px; gap: 12px; }
+  .stat-card .num { font-size: 21px; }
+  .stat-icon { width: 44px; height: 44px; font-size: 18px; }
+  .section { padding: 42px 0; }
+  .section-head h2 { font-size: 22px; }
+  .section-head { flex-direction: column; align-items: flex-start; }
+
+  .form-grid { grid-template-columns: 1fr; }
+  .form-card { padding: 22px 18px; }
+  .form-card { border-radius: 14px; }
+  .auth-card { padding: 30px 22px; }
+  .auth-wrap { padding: 32px 16px; }
+
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .item-card-img { height: 150px; }
+  .filter-row { flex-direction: column; align-items: stretch; }
+  .filter-row .form-group { min-width: 0; }
+  .filter-bar { padding: 14px; margin-bottom: 18px; }
+  .results-info { flex-wrap: wrap; gap: 8px; }
+  .dash-bar { padding: 12px; }
+  .dash-quick { width: 100%; }
+  .dash-quick .btn { flex: 1; }
+
+  .details-list { grid-template-columns: 1fr; }
+  .details-actions .btn { flex: 1; }
+  .details-img { height: 260px; }
+  .match-box { padding: 18px 16px; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .step-card { padding: 20px 16px; }
+  .notif-panel { position: fixed; top: 60px; right: 12px; left: 12px; width: auto; max-width: none; }
+
+  .table-wrap { border-radius: 12px; }
+  .dash-grid { grid-template-columns: 1fr; gap: 12px; }
+  .admin-content .dash-grid { grid-template-columns: 1fr; }
+  .profile-summary { padding: 16px 18px; }
+  .profile-chips { margin-left: 0; }
+
+  /* Page hero card */
+  .page-head { padding: 30px 0 26px; }
+  .page-head > .container { border-radius: 18px; padding: 28px 22px; }
+  .page-head h1 { font-size: 24px; }
+  .page-head p { font-size: 14px; }
+
+  .confirm-page { padding: 32px 16px; }
+  .confirm-check { width: 72px; height: 72px; font-size: 34px; }
+
+  /* Header controls align to one size */
+  .site-header { gap: 10px; }
+  .header-title { max-width: 38vw; }
+  .header-right { gap: 6px; }
+  .header-icon, .site-header .icon-round { width: 36px; height: 36px; border-radius: 10px; }
+  .header-avatar { width: 36px; height: 36px; }
+
+  /* Dashboard rail becomes a full-width aside (handled in dashboard.css) */
+
+  /* The admin console shares the public sidebar, whose drawer + safe-area
+     rules above handle its mobile behaviour automatically. */
+  .admin-content { padding: 20px 16px; }
+
+  /* Touch-friendly tap targets */
+  .form-group input, .form-group select, .form-group textarea,
+  .dash-search input { min-height: 46px; }
+
+  /* Even, balanced filter action buttons (filter-row is column here,
+     so size by width — flex-basis would affect height) */
+  .filter-row .btn { width: calc(50% - 6px); }
+
+  /* Compact mobile topbar: hamburger + title + bell only.
+     Desktop-only controls (theme toggle, avatar) move into the drawer. */
+  .site-header .theme-toggle,
+  .site-header .header-avatar-link { display: none; }
+  /* Drawer dark-mode row becomes visible on mobile (it replaces the header toggle) */
+  .side-acct-item.theme-toggle-side { display: flex; }
+
+  /* Admin topbar stays balanced on small screens: hide meta text,
+     let the page title truncate instead of pushing actions off-screen */
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .container { padding: 0 14px; }
+  .dash-wrap { padding-left: 14px; padding-right: 14px; }
+
+  .stats-grid { gap: 10px; }
+  .auth-card { padding: 26px 18px; border-radius: 18px; }
+  .btn-lg { padding: 12px 20px; }
+  .form-actions .btn { flex: 1; }
+  .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+  .card-badges { top: 8px; left: 8px; right: 8px; }
+
+  .form-card { padding: 20px 16px; }
+  .form-grid { gap: 14px; }
+  .radio-pill .pill { padding: 9px 14px; font-size: 13.5px; }
+  .form-actions { flex-direction: column; }
+  .form-actions .btn { width: 100%; }
+
+  /* Keep iOS from zooming on focus → avoids broken alignment */
+  .form-group input, .form-group select, .form-group textarea,
+  .filter-row input, .dash-search input { font-size: 16px; }
+
+  /* Homepage search bar must never overflow the fold */
+  .dash-search { min-width: 0; flex-wrap: wrap; }
+  .dash-search .btn { flex: 1; }
+
+  .page-head { padding: 22px 0 20px; }
+  .page-head > .container { border-radius: 16px; padding: 24px 18px; }
+  .page-head h1 { font-size: 22px; }
+  .page-eyebrow { font-size: 10.5px; padding: 4px 10px; }
+
+  .header-title { font-size: 14px; max-width: 34vw; }
+  .header-left { gap: 8px; }
+
+  .dash-section-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .profile-summary { padding: 16px; }
+  .profile-summary .avatar-lg { width: 56px; height: 56px; font-size: 22px; border-radius: 16px; }
+  .profile-chips { margin-left: 0; }
+
+  .dash-hero { padding: 22px 18px; }
+  .dash-empty { padding: 34px 16px; }
+
+  .details-panel { padding: 18px 16px; border-radius: 16px; }
+  .details-actions .btn { font-size: 13px; }
+  .desc-box { padding: 13px; font-size: 14px; }
+
+  .filter-bar { padding: 12px; }
+  .results-info > span { padding: 5px 12px; }
+
+  .admin-content { padding: 14px 12px; }
+
+  .table-wrap { border-radius: 10px; }
+  .data-table th, .data-table td { padding: 11px 12px; }
+
+  .modal-overlay { padding: 14px; }
+  .modal { padding: 22px 18px; border-radius: 16px; }
+  .toast { max-width: none; }
+
+  #toast-container {
+    left: 12px; right: 12px; top: auto; bottom: 12px;
+    align-items: stretch;
+  }
+  #toast-container .toast { width: 100%; max-width: none; }
+
+  .empty-state { padding: 40px 14px; }
+  .empty-state .empty-icon { width: 80px; height: 80px; font-size: 40px; border-radius: 22px; }
+  .step-card { padding: 18px 14px; }
+
+  /* Respect iOS home-indicator when toasts sit at the bottom */
+  #toast-container { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+}
+
+/* Narrow phones (iPhone SE / small Android) */
+@media (max-width: 360px) {
+  .container { padding: 0 12px; }
+  .dash-wrap { padding-left: 12px; padding-right: 12px; }
+
+  .site-header { gap: 8px; }
+  .header-left { gap: 6px; }
+  .header-right { gap: 4px; }
+  .header-title { max-width: 30vw; }
+
+  .navbar-inner { gap: 8px; }
+  .navbar .brand { font-size: 18px; }
+  .navbar .btn-sm { padding: 6px 10px; }
+
+  .auth-card { padding: 26px 16px; }
+  .stat-card { padding: 12px; gap: 10px; }
+  .stat-card .num { font-size: 19px; }
+  .stat-icon { width: 40px; height: 40px; font-size: 16px; }
+
+  .page-head > .container { padding: 22px 16px; }
+  .form-card { padding: 18px 14px; }
+  .details-panel { padding: 16px 14px; }
+  .details-img { height: 230px; }
+}
