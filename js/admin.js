@@ -889,7 +889,7 @@ function initAdminSettings(admin) {
       </div>
       <div class="form-card" style="max-width:none;margin:0">
         <h2 style="color:var(--danger)">Danger Zone</h2>
-        <p class="form-sub">Reset the prototype back to its original sample data.</p>
+        <p class="form-sub">Wipe all reports, claims, notifications and activity logs.</p>
         <button class="btn btn-danger" id="reset-data">Reset All Demo Data</button>
       </div>
     </div>`);
@@ -926,7 +926,7 @@ function initAdminSettings(admin) {
     resetBtn.addEventListener("click", () => {
       confirmDialog(
         "Reset all data?",
-        "This wipes all reports, claims, notifications and activity logs and restores the sample data. User accounts are kept. This cannot be undone.",
+        "This wipes all reports, claims, notifications and activity logs. User accounts are kept. This cannot be undone.",
         async () => {
           try {
             await Store.resetDemo();

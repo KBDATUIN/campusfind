@@ -13,7 +13,7 @@
 --   • RPC functions: next_counter (sequential IDs), admin_delete_user,
 --     reset_demo_data
 --   • A public storage bucket for item photos
---   • Demo accounts + sample data
+--   • Demo accounts
 -- ============================================================
 
 create extension if not exists pgcrypto;
@@ -321,7 +321,7 @@ begin
 end;
 $$;
 
--- Wipe user-generated data and restore the sample dataset.
+-- Wipe all user-generated data (used by the admin "Reset Data" button).
 create or replace function public.reset_demo_data()
 returns void
 language plpgsql
@@ -338,46 +338,6 @@ begin
   delete from public.claims;
   delete from public.items;
   delete from public.counters;
-
-  insert into public.items (id, report_id, type, name, category, description, brand, color, location, date, time, status, reporter_id, identifying_features, additional_notes, created_at, updated_at) values
-    ('ITEM-0001', 'LF-2026-0001', 'lost', 'MacBook Pro 14"', 'Electronics', 'Silver MacBook Pro 14 inch with a small dent on the left corner. Charger not included. Home screen shows a mountain wallpaper.', 'Apple', 'Silver', 'Main Library', now() - interval '1 day', '15:30', 'verified', '00000000-0000-4000-8000-000000000004', 'Sticker of a fox on the lid, tiny dent on left corner', 'Very important — all my project files are on it.', now() - interval '1 day', now() - interval '1 day'),
-    ('ITEM-0002', 'LF-2026-0002', 'lost', 'Student ID Card', 'ID/Card', 'Blue student ID card with photo. Name on card is James Carter.', 'Campus ID Office', 'Blue', 'Student Center', now() - interval '3 days', '12:10', 'verified', '00000000-0000-4000-8000-000000000004', 'Name: James Carter, ID ends in 2401', '', now() - interval '3 days', now() - interval '3 days'),
-    ('ITEM-0003', 'LF-2026-0003', 'lost', 'Wireless Earbuds', 'Electronics', 'White wireless earbuds in a charging case. Case has a small scratch near the hinge.', 'Sony', 'White', 'Gymnasium', now() - interval '2 days', '17:45', 'pending', '00000000-0000-4000-8000-000000000005', 'Scratch on the charging case hinge', '', now() - interval '2 days', now() - interval '2 days'),
-    ('ITEM-0004', 'LF-2026-0004', 'lost', 'Leather Wallet', 'Wallet/Purse', 'Brown leather wallet with a metal clasp. Contains a few cards and some cash.', 'Fossil', 'Brown', 'Cafeteria', now() - interval '4 days', '13:20', 'verified', '00000000-0000-4000-8000-000000000002', 'Metal clasp engraved with initials ER', '', now() - interval '4 days', now() - interval '4 days'),
-    ('ITEM-0005', 'LF-2026-0005', 'lost', 'House Keys', 'Keys', 'Set of 4 keys on a blue keychain with a small rubber duck charm.', '—', 'Silver', 'Science Building', now() - interval '5 days', '16:00', 'verified', '00000000-0000-4000-8000-000000000006', 'Rubber duck keychain charm', '', now() - interval '5 days', now() - interval '5 days'),
-    ('ITEM-0006', 'LF-2026-0007', 'lost', 'Calculus Textbook', 'Books', 'Calculus: Early Transcendentals, 9th edition. Wrapped in brown paper.', 'Cengage', 'Brown', 'Engineering Building', now() - interval '7 days', '11:30', 'verified', '00000000-0000-4000-8000-000000000008', 'Wrapped in brown paper, name written inside cover', '', now() - interval '7 days', now() - interval '7 days'),
-    ('ITEM-0007', 'FD-2026-0001', 'found', 'MacBook Pro', 'Electronics', 'Silver MacBook Pro found plugged in near the 2nd floor study tables of the library. Slightly dented on the left corner.', 'Apple', 'Silver', 'Main Library', now() - interval '1 day', '16:20', 'verified', '00000000-0000-4000-8000-000000000003', 'Dent on left corner, fox sticker on lid', '', now() - interval '1 day', now() - interval '1 day'),
-    ('ITEM-0008', 'FD-2026-0002', 'found', 'Wireless Earbuds Case', 'Electronics', 'White earbud case found in the locker room. No earbuds inside the case.', 'Sony', 'White', 'Gymnasium', now() - interval '2 days', '18:05', 'verified', '00000000-0000-4000-8000-000000000008', 'Scratch near the hinge', '', now() - interval '2 days', now() - interval '2 days'),
-    ('ITEM-0009', 'FD-2026-0003', 'found', 'Brown Wallet', 'Wallet/Purse', 'Brown leather wallet found on a cafeteria table. Contains cards and a small amount of cash.', 'Fossil', 'Brown', 'Cafeteria', now() - interval '4 days', '13:45', 'claim-approved', '00000000-0000-4000-8000-000000000006', 'Metal clasp, initials ER engraved', '', now() - interval '4 days', now() - interval '4 days'),
-    ('ITEM-0010', 'FD-2026-0004', 'found', 'Keyring with Keys', 'Keys', 'Four keys on a blue keyring with a duck charm, found in Science Building room 204.', '—', 'Blue', 'Science Building', now() - interval '5 days', '16:30', 'returned', '00000000-0000-4000-8000-000000000002', 'Blue keyring with rubber duck charm', '', now() - interval '5 days', now() - interval '5 days'),
-    ('ITEM-0011', 'FD-2026-0005', 'found', 'Graphing Calculator', 'Electronics', 'TI-84 Plus graphing calculator found in Lecture Hall B.', 'Texas Instruments', 'Black', 'Lecture Hall B', now() - interval '9 days', '09:50', 'verified', '00000000-0000-4000-8000-000000000003', 'Name sticker partially peeled', '', now() - interval '9 days', now() - interval '9 days'),
-    ('ITEM-0012', 'FD-2026-0006', 'found', 'Backpack', 'Accessories', 'Black school backpack with a red zipper found near the fountain in the quad.', 'Nike', 'Black', 'Quad Area', now() - interval '10 days', '15:15', 'pending', '00000000-0000-4000-8000-000000000004', 'Red zipper, white Nike logo', '', now() - interval '10 days', now() - interval '10 days');
-
-  insert into public.claims (id, claim_id, item_id, claimant_id, explanation, identifying_details, status, admin_notes, created_at, updated_at) values
-    ('CLAIM-0001', 'CL-2026-0001', 'ITEM-0007', '00000000-0000-4000-8000-000000000004', 'This is my MacBook. I was working on my thesis at the library 2nd floor and left it plugged in while I went to the restroom. It has my project files and a fox sticker.', 'Fox sticker on the lid and a small dent on the left corner from a previous fall.', 'approved', 'Claimant description matches identifying features exactly. Arranged handover at library front desk.', now() - interval '1 day', now() - interval '1 day'),
-    ('CLAIM-0002', 'CL-2026-0002', 'ITEM-0008', '00000000-0000-4000-8000-000000000005', 'I lost my white Sony earbuds case at the gym after practice. The scratch on the hinge matches the damage from when I dropped them.', 'Small scratch near the hinge of the case.', 'pending', '', now() - interval '1 day', now() - interval '1 day'),
-    ('CLAIM-0003', 'CL-2026-0003', 'ITEM-0009', '00000000-0000-4000-8000-000000000002', 'This wallet is mine — I ate lunch at the cafeteria and must have left it on the table. It has my staff ID and debit cards.', 'Metal clasp engraved with initials ER for Elena Rodriguez.', 'completed', 'Item handed over at security office. Receipt signed.', now() - interval '3 days', now() - interval '3 days'),
-    ('CLAIM-0004', 'CL-2026-0005', 'ITEM-0011', '00000000-0000-4000-8000-000000000005', 'I lost my TI-84 calculator in Lecture Hall B during my math final.', 'Partially peeled name sticker.', 'investigation', 'Requested the claimant bring the original purchase receipt.', now() - interval '8 days', now() - interval '8 days');
-
-  insert into public.notifications (id, user_id, title, message, read, created_at) values
-    ('NTF-0001', '00000000-0000-4000-8000-000000000004', 'Report Approved', 'Your report for MacBook Pro 14" (LF-2026-0001) has been verified and published.', false, now() - interval '1 day'),
-    ('NTF-0002', '00000000-0000-4000-8000-000000000004', 'Claim Approved', 'Your claim CL-2026-0001 for MacBook Pro has been approved. Pick it up at the Library Front Desk.', false, now() - interval '1 day'),
-    ('NTF-0003', '00000000-0000-4000-8000-000000000005', 'Possible Match Found', 'A found item may match your lost Wireless Earbuds report. Check the details.', false, now() - interval '2 days'),
-    ('NTF-0004', '00000000-0000-4000-8000-000000000008', 'Report Approved', 'Your report for Calculus Textbook (LF-2026-0007) has been verified and published.', true, now() - interval '7 days');
-
-  insert into public.activity_logs (id, admin_id, action, target, timestamp) values
-    ('LOG-0001', '00000000-0000-4000-8000-000000000001', 'Approved report', 'LF-2026-0001 (MacBook Pro 14")', now() - interval '1 day'),
-    ('LOG-0002', '00000000-0000-4000-8000-000000000001', 'Approved claim', 'CL-2026-0001 (MacBook Pro 14")', now() - interval '1 day'),
-    ('LOG-0003', '00000000-0000-4000-8000-000000000001', 'Marked item returned', 'FD-2026-0004 (Keyring with Keys)', now() - interval '4 days');
-
-  -- Keep sequential counters ahead of the seed data.
-  insert into public.counters (name, value)
-  select 'LF-' || to_char(now(), 'YYYY'), count(*) from public.items where type = 'lost'
-  union all
-  select 'FD-' || to_char(now(), 'YYYY'), count(*) from public.items where type = 'found'
-  union all
-  select 'CL-' || to_char(now(), 'YYYY'), count(*) from public.claims
-  on conflict (name) do update set value = excluded.value;
 end;
 $$;
 
@@ -437,6 +397,4 @@ update public.users set role = 'admin', account_type = 'staff' where id = '00000
 update public.users set role = 'staff', account_type = 'staff' where id in ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000003');
 update public.users set status = 'suspended' where id = '00000000-0000-4000-8000-000000000007';
 
--- Load the sample reports/claims/notifications (also used by the admin
--- "Reset Data" button).
-select public.reset_demo_data();
+
