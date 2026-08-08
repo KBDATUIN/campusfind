@@ -186,6 +186,8 @@ const Store = {
       } catch (e) {
         this.bootError = e.message || String(e);
         console.error("CampusFind boot error:", e);
+      } finally {
+        this.hydrated = true;
       }
     })();
     return this.ready;
@@ -213,20 +215,24 @@ const Store = {
       if (profile && profile.status === "active") {
         localStorage.setItem(this.SESSION_KEY, session.user.id);
         setRoleCookie(profile);
+        setCachedProfile(profile);
       } else {
         await this.client.auth.signOut();
         localStorage.removeItem(this.SESSION_KEY);
         setRoleCookie(null);
+        setCachedProfile(null);
       }
     }
     this.client.auth.onAuthStateChange((event, nextSession) => {
       if (event === "SIGNED_OUT") {
         localStorage.removeItem(this.SESSION_KEY);
+        setCachedProfile(null);
       } else if (event === "SIGNED_IN" && nextSession) {
         const profile = this.data.users.find((u) => u.id === nextSession.user.id);
         if (profile) {
           localStorage.setItem(this.SESSION_KEY, nextSession.user.id);
           setRoleCookie(profile);
+          setCachedProfile(profile);
         } else {
           /* Brand-new account (e.g. just confirmed via email) — fetch its profile. */
           this.client
@@ -236,8 +242,10 @@ const Store = {
             .maybeSingle()
             .then(({ data }) => {
               if (data) {
-                this.data.users.push(this.dbToObj("users", data));
+                const cached = this.dbToObj("users", data);
+                this.data.users.push(cached);
                 localStorage.setItem(this.SESSION_KEY, nextSession.user.id);
+                setCachedProfile(cached);
               }
             })
             .catch(() => {});
@@ -480,20 +488,47 @@ function colorSimilar(a, b) {
 }
 
 /* ---------------- Auth / Session ---------------- */
+const PROFILE_CACHE_KEY = "campusfind_profile";
+
+/* Remembers the last-known profile so the shell can render the logged-in
+   state instantly on the next page load (before Supabase data arrives).
+   Display only — the real session/authorization still comes from Supabase. */
+function setCachedProfile(user) {
+  try {
+    if (user) localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(user));
+    else localStorage.removeItem(PROFILE_CACHE_KEY);
+  } catch (e) {}
+}
+
+function getCachedProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
 function currentUser() {
   const uidSession = localStorage.getItem(Store.SESSION_KEY);
   if (!uidSession) return null;
-  /* Store may not be loaded yet when called from early inline scripts */
-  if (!Store.data) return null;
-  return Store.get("users", uidSession) || null;
+  const found = Store.get("users", uidSession);
+  if (found) return found;
+  /* Pre-hydration fallback only: the last-known profile, so the sidebar
+     never flashes the logged-out state while Supabase data is loading.
+     Once hydration has finished (success or failure) the in-memory store
+     is the sole source of truth. */
+  if (Store.hydrated) return null;
+  const cached = getCachedProfile();
+  return cached && cached.id === uidSession ? cached : null;
 }
 
 function setSession(user) {
   localStorage.setItem(Store.SESSION_KEY, user.id);
+  setCachedProfile(user);
 }
 
 function clearSession() {
   localStorage.removeItem(Store.SESSION_KEY);
+  setCachedProfile(null);
 }
 
 function logout() {
