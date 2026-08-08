@@ -681,7 +681,7 @@ function statusBadge(status, isClaim) {
 
 /* ---------------- Image helpers ---------------- */
 function itemImage(item) {
-  if (item.image) return `<img src="${item.image}" alt="${esc(item.name)}">`;
+  if (item.image) return `<img src="${item.image}" alt="${esc(item.name)}" loading="lazy" decoding="async">`;
   return `<span class="no-img" aria-hidden="true">${CATEGORY_ICONS[item.category] || ICONS.reportLost}</span>`;
 }
 

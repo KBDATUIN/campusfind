@@ -287,12 +287,12 @@ function initAdminReports() {
         <p class="muted small">Review, verify and moderate every submission.</p>
       </div>
       <div class="dash-actions">
-        <select class="form-group" id="report-type" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+        <select class="select-mini" id="report-type">
           <option value="all">All types</option>
           <option value="lost">Lost</option>
           <option value="found">Found</option>
         </select>
-        <select class="form-group" id="report-status" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+        <select class="select-mini" id="report-status">
           <option value="all">All statuses</option>
           <option value="pending">Pending Verification</option>
           <option value="verified">Verified</option>
@@ -506,7 +506,7 @@ function initAdminClaims() {
         <h2 style="font-size:22px">Claim Management</h2>
         <p class="muted small">Review evidence, approve or reject claims, and complete returns.</p>
       </div>
-      <select class="form-group" id="claim-status" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px">
+      <select class="select-mini" id="claim-status">
         <option value="all">All statuses</option>
         <option value="pending">Pending Review</option>
         <option value="investigation">Under Investigation</option>

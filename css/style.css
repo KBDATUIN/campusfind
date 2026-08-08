@@ -67,6 +67,11 @@
   /* Collapsed sidebar width — the icon centering (68px rows, 26px toggle
      margins) is derived from this token so it can never drift out of sync. */
   --side-w-collapsed: 84px;
+
+  /* Shared hero banner gradient — page headers and the dashboard hero
+     consume this token so every gradient banner is pixel-identical. */
+  --page-hero-bg: linear-gradient(135deg, var(--brand-1), var(--brand-2) 58%, var(--brand-3));
+
   color-scheme: light;
 }
 
@@ -778,7 +783,8 @@ body.no-scroll { overflow: hidden; }
 .dash-search-ico { font-size: 17px; color: var(--text-muted); }
 .dash-search input {
   flex: 1; min-width: 0;
-  padding: 11px 14px;
+  height: 46px;
+  padding: 0 14px;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   font-size: 14px;
@@ -790,8 +796,11 @@ body.no-scroll { overflow: hidden; }
 }
 .dash-search input::placeholder { color: var(--text-muted); }
 .dash-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
-.dash-search .btn { flex-shrink: 0; }
+.dash-search .btn { flex-shrink: 0; height: 46px; padding-top: 0; padding-bottom: 0; }
 .dash-quick { display: flex; gap: 10px; flex-wrap: wrap; }
+/* Quick-action buttons share the search row's control height so the whole
+   bar lines up on one baseline. */
+.dash-quick .btn { height: 46px; padding-top: 0; padding-bottom: 0; }
 
 .btn-lost {
   background: linear-gradient(135deg, #f59e0b, #ea580c);
@@ -906,7 +915,7 @@ body.no-scroll { overflow: hidden; }
 .item-card-cat { font-size: 12.5px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
 .item-card-meta { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--text-muted); margin: 6px 0 10px; }
 .item-card-meta span { display: flex; align-items: center; gap: 7px; }
-.item-card-meta span::before { opacity: 0.65; }
+.item-card-meta span .ic { color: var(--primary); }
 .item-card-desc {
   font-size: 13.5px; color: var(--text-muted);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -1031,6 +1040,29 @@ body.no-scroll { overflow: hidden; }
   -moz-appearance: none;
 }
 .form-group select option { background: var(--surface); color: var(--text); }
+
+/* Compact toolbar select (admin filters, action bars) — same styling
+   language as form selects so the bars line up with neighbouring buttons. */
+.select-mini {
+  height: 40px;
+  padding: 0 38px 0 12px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font);
+  background-color: var(--surface-2);
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.select-mini:focus { border-color: var(--primary); background-color: var(--surface); box-shadow: 0 0 0 4px var(--ring); }
+.select-mini option { background: var(--surface); color: var(--text); }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   border-color: var(--primary);
   background: var(--surface);
@@ -1056,7 +1088,12 @@ body.no-scroll { overflow: hidden; }
   box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
 }
 .form-group.invalid .field-error { display: block; }
-.form-actions { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+.form-actions {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 26px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.form-actions .btn { min-height: 46px; }
 
 .radio-pills { display: flex; gap: 10px; flex-wrap: wrap; }
 .radio-pill { position: relative; cursor: pointer; }
@@ -1231,9 +1268,14 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
 .filter-row .form-group { flex: 1; min-width: 155px; }
 .filter-row .form-group.search-grow { flex: 2; min-width: 220px; }
-.filter-row .btn { align-self: flex-end; }
+/* Every filter control sits on the same 46px grid line — inputs, selects
+   and the action buttons share one height so the row aligns perfectly. */
+.filter-row .form-group input,
+.filter-row .form-group select { height: 46px; padding-top: 0; padding-bottom: 0; }
+.filter-row .btn { height: 46px; padding-top: 0; padding-bottom: 0; align-self: flex-end; }
 .results-info {
   display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
   margin-bottom: 16px; font-size: 14px; color: var(--text-muted);
 }
 .results-info > span {
@@ -1411,9 +1453,10 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 }
 .page-head > .container {
   position: relative;
-  background: radial-gradient(900px 210px at 88% -60px, rgba(255, 255, 255, 0.3), transparent 62%),
+  background:
+    radial-gradient(900px 210px at 88% -60px, rgba(255, 255, 255, 0.3), transparent 62%),
     radial-gradient(320px 190px at -6% 130%, rgba(30, 27, 75, 0.26), transparent 60%),
-    linear-gradient(135deg, var(--brand-1), var(--brand-2) 58%, var(--brand-3));
+    var(--page-hero-bg);
   color: #fff;
   border-radius: 22px;
   padding: 34px 36px;
@@ -1442,6 +1485,9 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 }
 .page-head h1 { color: #fff; font-size: 30px; margin-bottom: 6px; letter-spacing: -0.02em; position: relative; z-index: 1; }
 .page-head p { color: rgba(255, 255, 255, 0.9); position: relative; z-index: 1; max-width: 64ch; }
+
+/* Standard content spacing below the header hero (replaces inline styles) */
+.page-body { padding: 28px 20px 80px; }
 
 /* ============ FORM SECTIONS (visual chunking) ============ */
 .form-section { margin-top: 8px; padding-top: 20px; border-top: 1px dashed var(--border); }
@@ -1499,6 +1545,7 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 .mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; }
 .mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
 .flex-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.text-left { text-align: left; }
 .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
 /* ============ ANIMATIONS ============ */

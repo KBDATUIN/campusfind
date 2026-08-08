@@ -118,6 +118,7 @@ body {
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .dash-wrap { padding-left: 16px; padding-right: 16px; }
+  .page-body { padding: 24px 16px 64px; }
 
   /* Single-column stacking per requirements (<768px): greeting card,
      profile card, stat cards and quick links all stack cleanly */
@@ -205,6 +206,7 @@ body {
 @media (max-width: 480px) {
   .container { padding: 0 14px; }
   .dash-wrap { padding-left: 14px; padding-right: 14px; }
+  .page-body { padding: 22px 14px 52px; }
 
   .stats-grid { gap: 10px; }
   .auth-card { padding: 26px 18px; border-radius: 18px; }

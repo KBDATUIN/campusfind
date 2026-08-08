@@ -211,7 +211,7 @@ function initDetails() {
   /* Possible matches for lost items */
   if (item.type === "lost" && matches.length) {
     const matchHtml = `
-    <div class="match-box" style="margin:28px auto 0;max-width:980px">
+    <div class="match-box mt-24">
       <h3><span aria-hidden="true">${ICONS.flash}</span> Possible Match Found</h3>
       <p>${matches.length} found item${matches.length > 1 ? "s" : ""} may match your lost item. Matching is not automatic — contact the school office to verify.</p>
       <div class="cards-grid">
@@ -329,7 +329,7 @@ function initReport(type) {
       const matches = findMatches(item);
       if (matches.length) {
         matchHtml = `
-        <div class="match-box" style="text-align:left;margin-top:22px">
+        <div class="match-box text-left mt-24">
 <h3><span aria-hidden="true">${ICONS.flash}</span> Possible Match Found</h3>
           <p>We detected ${matches.length} found item${matches.length > 1 ? "s" : ""} that may match your lost item. A notification was sent to your dashboard.</p>
           <div class="cards-grid">
