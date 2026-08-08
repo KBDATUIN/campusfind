@@ -308,7 +308,7 @@ function initReport(type) {
       location: sanitizeInput(form["location"].value),
       date: new Date(form["date"].value).toISOString(),
       time: sanitizeInput(form["time"].value),
-      image: imageUrl,
+      image: imageUrl || "",
       status: "pending",
       reporterId: user.id,
       identifyingFeatures: sanitizeInput(form["identifyingFeatures"].value),

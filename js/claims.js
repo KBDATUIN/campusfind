@@ -105,7 +105,7 @@ function openClaimForm(itemId) {
 
     if (evidenceFile && evidenceFile.type.startsWith("image/")) {
       compressImage(evidenceFile, 420, async (dataUrl) => {
-        let url = null;
+        let url = "";
         try {
           url = await uploadImage(dataUrl, "evidence");
         } catch (err) {
@@ -114,7 +114,7 @@ function openClaimForm(itemId) {
         processEvidence(url);
       });
     } else {
-      processEvidence(null);
+      processEvidence("");
     }
   });
 }
