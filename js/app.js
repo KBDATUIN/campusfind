@@ -5,13 +5,8 @@
    ============================================================ */
 "use strict";
 
-/* ---------------- Theme system ---------------- */
-(function initTheme() {
-  var link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap";
-  document.head.appendChild(link);
-})();
+/* Fonts load via <link> in each page's <head> (preconnect + stylesheet),
+   so the UI never waits for a runtime-injected stylesheet. */
 
 const THEME_KEY = "campusfind_theme";
 
@@ -125,7 +120,7 @@ const CLAIM_STATUS_META = {
 const Store = {
   SESSION_KEY: "campusfind_session",
   client: null,
-  data: { users: [], items: [], claims: [], notifications: [], activityLogs: [], settings: [] },
+  data: { users: [], items: [], claims: [], contacts: [], notifications: [], activityLogs: [], settings: [] },
   bootError: null,
   ready: null,
 
@@ -133,6 +128,7 @@ const Store = {
     users: "users",
     items: "items",
     claims: "claims",
+    contacts: "item_contacts",
     notifications: "notifications",
     activityLogs: "activity_logs",
     settings: "settings",
@@ -141,8 +137,9 @@ const Store = {
   /* snake_case (database) → camelCase (app) column names */
   COLUMN_MAP: {
     users: { full_name: "fullName", school_id: "schoolId", account_type: "accountType", created_at: "createdAt" },
-    items: { report_id: "reportId", reporter_id: "reporterId", identifying_features: "identifyingFeatures", contact_info: "contactInfo", storage_location: "storageLocation", additional_notes: "additionalNotes", reject_reason: "rejectReason", created_at: "createdAt", updated_at: "updatedAt" },
+    items: { report_id: "reportId", reporter_id: "reporterId", identifying_features: "identifyingFeatures", storage_location: "storageLocation", additional_notes: "additionalNotes", reject_reason: "rejectReason", created_at: "createdAt", updated_at: "updatedAt" },
     claims: { claim_id: "claimId", item_id: "itemId", claimant_id: "claimantId", identifying_details: "identifyingDetails", admin_notes: "adminNotes", created_at: "createdAt", updated_at: "updatedAt" },
+    contacts: { item_id: "id", contact_info: "contactInfo" },
     notifications: { user_id: "userId", created_at: "createdAt" },
     activityLogs: { admin_id: "adminId" },
     settings: { site_name: "siteName", contact_email: "contactEmail", auto_match: "autoMatch", notify_finders: "notifyFinders" },
@@ -1127,6 +1124,8 @@ Store.init();
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(getTheme());
   hydrateIcons();
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
   /* Render the shell immediately (no blank flash while data loads), then
      re-render after hydration so the session-aware parts update. */
   renderNav();

@@ -201,7 +201,7 @@ function initAdminDashboard(admin) {
   if (recentEl) recentEl.innerHTML = `<div class="skeleton skeleton-row"></div>`.repeat(3);
   const actEl = document.getElementById("admin-activity");
   if (actEl) actEl.innerHTML = `<div class="skeleton skeleton-row"></div>`.repeat(3);
-  setTimeout(() => fillAdminDashboard(admin), 320);
+  fillAdminDashboard(admin);
 }
 
 function fillAdminDashboard(admin) {
@@ -325,7 +325,16 @@ function initAdminReports() {
   filterType.addEventListener("change", render);
   filterStatus.addEventListener("change", render);
   tableBody.innerHTML = `<tr><td colspan="7"><div class="skeleton skeleton-row"></div></td></tr>`.repeat(4);
-  setTimeout(render, 250);
+  render();
+}
+
+/* Private contact info for a report (stored in item_contacts — only
+   reporters and staff/admins can read it via RLS). */
+function contactText(itemId) {
+  const contact = Store.get("contacts", itemId);
+  return contact && contact.contactInfo
+    ? `<p class="small mt-8"><b>Contact info (private):</b> ${esc(contact.contactInfo)}</p>`
+    : "";
 }
 
 function viewReport(id) {
@@ -353,7 +362,7 @@ function viewReport(id) {
       <p class="small"><b>Description:</b> ${esc(item.description || "—")}</p>
       <p class="small mt-8"><b>Identifying features:</b> ${esc(item.identifyingFeatures || "—")}</p>
       ${item.storageLocation ? `<p class="small mt-8"><b>Stored at:</b> ${esc(item.storageLocation)}</p>` : ""}
-      ${item.contactInfo ? `<p class="small mt-8"><b>Contact info (private):</b> ${esc(item.contactInfo)}</p>` : ""}
+      ${contactText(id)}
       <hr class="divider">
       <p class="small"><b>Reporter:</b> ${reporter ? esc(reporter.fullName) + " (" + esc(reporter.schoolId) + ")" : "—"}</p>
       <p class="small mt-8"><b>Reported:</b> ${fmtDate(item.createdAt, true)}</p>
@@ -556,7 +565,7 @@ function initAdminClaims() {
 
   filterStatus.addEventListener("change", render);
   tableBody.innerHTML = `<tr><td colspan="6"><div class="skeleton skeleton-row"></div></td></tr>`.repeat(4);
-  setTimeout(render, 250);
+  render();
 }
 
 function viewClaimAdmin(id) {
@@ -774,7 +783,7 @@ function initAdminUsers(admin) {
   filterRole.addEventListener("change", render);
   filterStatus.addEventListener("change", render);
   tableBody.innerHTML = `<tr><td colspan="7"><div class="skeleton skeleton-row"></div></td></tr>`.repeat(4);
-  setTimeout(render, 250);
+  render();
 }
 
 function viewUser(id) {

@@ -108,11 +108,15 @@ function initListings(type) {
   bind("filter-date", "date");
   bind("filter-sort", "sort");
 
-  /* live search */
+  /* live search (debounced so typing doesn't re-render per keystroke) */
   if (searchInput) {
+    let debounceTimer = null;
     searchInput.addEventListener("input", () => {
-      state.q = searchInput.value;
-      render();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        state.q = searchInput.value;
+        render();
+      }, 150);
     });
   }
 
@@ -137,7 +141,8 @@ function initListings(type) {
 
   grid.innerHTML = `<div class="skeleton skeleton-card"></div>`.repeat(3);
   if (countEl) countEl.textContent = "Loading results…";
-  setTimeout(render, 280);
+  /* whenReady() has already hydrated the store — render immediately. */
+  render();
 }
 
 /* ---------------- Item details ---------------- */
@@ -163,7 +168,7 @@ function initDetails() {
   const matches = item.type === "lost" ? findMatches(item) : [];
 
   wrap.innerHTML = `
-  <div class="container details-wrap" style="padding:0">
+  <div class="details-wrap">
     <a href="${item.type === "lost" ? "lost-items.html" : "found-items.html"}" class="btn btn-secondary btn-sm mb-16">&larr; Back to ${item.type === "lost" ? "Lost" : "Found"} Items</a>
     <div class="details-grid">
       <div class="details-img">${itemImage(item)}</div>
@@ -312,13 +317,19 @@ function initReport(type) {
       status: "pending",
       reporterId: user.id,
       identifyingFeatures: sanitizeInput(form["identifyingFeatures"].value),
-      contactInfo: sanitizeInput(form["contactInfo"].value),
       storageLocation: type === "found" ? sanitizeInput(form["storageLocation"].value) : "",
       additionalNotes: sanitizeInput(form["additionalNotes"].value),
       rejectReason: "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
+
+    /* Contact info is private — stored in its own table that only the
+       reporter and staff/admins can read (see supabase/schema.sql). */
+    const contactInfo = sanitizeInput(form["contactInfo"].value);
+    if (contactInfo) {
+      Store.insert("contacts", { id: item.id, contactInfo });
+    }
 
     logActivity(user.id, "Submitted " + type + " report", item.reportId + " (" + item.name + ")");
     addNotification(user.id, type === "lost" ? "Report Submitted" : "Report Submitted", `Your report ${item.reportId} is now Pending Verification. An administrator will review it shortly.`);

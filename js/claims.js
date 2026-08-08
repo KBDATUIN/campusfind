@@ -3,10 +3,6 @@
    ============================================================ */
 "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.getAttribute("data-page") === "claim") whenReady(initClaimForm);
-});
-
 /* Called from item-details page */
 function openClaimForm(itemId) {
   const item = Store.get("items", itemId);
@@ -117,27 +113,4 @@ function openClaimForm(itemId) {
       processEvidence("");
     }
   });
-}
-
-/* ---------------- Claim form page (standalone) ---------------- */
-function initClaimForm() {
-  const itemId = new URLSearchParams(window.location.search).get("item");
-  const container = document.getElementById("claim-page");
-  if (!container) return;
-  const user = requireAuth();
-  if (!user) return;
-
-  const item = Store.get("items", itemId);
-  if (!item || item.type !== "found") {
-    container.innerHTML = emptyState("Invalid claim target", "The item you're trying to claim doesn't exist.");
-    return;
-  }
-  container.innerHTML = "";
-  document.title = "Claim " + item.name + " | CampusFind";
-  const btn = document.createElement("button");
-  btn.className = "btn btn-primary btn-lg";
-  btn.textContent = "Open Claim Form";
-  btn.onclick = () => openClaimForm(item.id);
-  container.appendChild(btn);
-  btn.click();
 }

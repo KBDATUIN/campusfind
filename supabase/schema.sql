@@ -50,12 +50,20 @@ create table if not exists public.items (
     check (status in ('pending', 'verified', 'rejected', 'claim-approved', 'returned')),
   reporter_id uuid references public.users(id) on delete set null,
   identifying_features text not null default '',
-  contact_info text not null default '',
   storage_location text not null default '',
   additional_notes text not null default '',
   reject_reason text not null default '',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+-- Private contact info for a report. Kept in its own table (NOT on items)
+-- so RLS can hide it from everyone except the reporter and staff/admins;
+-- public item rows never carry contact details.
+create table if not exists public.item_contacts (
+  item_id text primary key references public.items(id) on delete cascade,
+  contact_info text not null default '',
+  created_at timestamptz not null default now()
 );
 
 create table if not exists public.claims (
@@ -155,6 +163,7 @@ $$;
 
 alter table public.users enable row level security;
 alter table public.items enable row level security;
+alter table public.item_contacts enable row level security;
 alter table public.claims enable row level security;
 alter table public.notifications enable row level security;
 alter table public.activity_logs enable row level security;
@@ -205,6 +214,28 @@ create policy "items_update_staff" on public.items for update
 
 drop policy if exists "items_delete_staff" on public.items;
 create policy "items_delete_staff" on public.items for delete
+  using (public.is_staff_or_admin());
+
+-- item_contacts: only the reporter and staff/admins can see contact info.
+-- Visitors can see item rows but never the private contact details.
+drop policy if exists "item_contacts_select" on public.item_contacts;
+create policy "item_contacts_select" on public.item_contacts for select
+  using (
+    public.is_staff_or_admin()
+    or exists (select 1 from public.items where id = item_id and reporter_id = auth.uid())
+  );
+
+drop policy if exists "item_contacts_insert" on public.item_contacts;
+create policy "item_contacts_insert" on public.item_contacts for insert
+  with check (exists (select 1 from public.items where id = item_id and reporter_id = auth.uid()));
+
+drop policy if exists "item_contacts_update_staff" on public.item_contacts;
+create policy "item_contacts_update_staff" on public.item_contacts for update
+  using (public.is_staff_or_admin())
+  with check (public.is_staff_or_admin());
+
+drop policy if exists "item_contacts_delete_staff" on public.item_contacts;
+create policy "item_contacts_delete_staff" on public.item_contacts for delete
   using (public.is_staff_or_admin());
 
 -- claims: only the claimant and staff/admins can see a claim.
@@ -337,6 +368,7 @@ begin
   delete from public.activity_logs;
   delete from public.claims;
   delete from public.items;
+  delete from public.item_contacts;
   delete from public.counters;
 end;
 $$;
@@ -398,3 +430,16 @@ update public.users set role = 'staff', account_type = 'staff' where id in ('000
 update public.users set status = 'suspended' where id = '00000000-0000-4000-8000-000000000007';
 
 
+
+-- ============================================================
+-- One-time migration for existing installations (ran against a database
+-- that already had contact_info on public.items):
+--   Prior versions stored contact info directly on the items table, which
+--   meant any authenticated visitor could read it via RLS. Fresh installs
+--   skip this (the column no longer exists). Existing databases must run:
+--
+--   insert into public.item_contacts (item_id, contact_info)
+--     select id, contact_info from public.items
+--     where contact_info is not null and contact_info <> '';
+--   alter table public.items drop column if exists contact_info;
+-- ============================================================

@@ -3,38 +3,15 @@
    ============================================================ */
 "use strict";
 
+/* whenReady() has already hydrated the store — render immediately. */
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.getAttribute("data-page") !== "dashboard") return;
   whenReady(() => {
     const user = requireAuth();
     if (!user) return;
-    skeletonDashboard();
-    setTimeout(() => renderDashboard(user), 320);
+    renderDashboard(user);
   });
 });
-
-function skeletonDashboard() {
-  const statsEl = document.getElementById("dash-stats");
-  if (statsEl) statsEl.innerHTML = `<div class="skeleton skeleton-stat"></div>`.repeat(4);
-  const container = document.getElementById("dash-sections");
-  if (container) {
-    container.innerHTML = `
-      <div class="dash-section">
-        <div class="skeleton-lines" style="margin-bottom:16px"><span class="skeleton-bar" style="height:20px;width:30%"></span></div>
-        <div class="cards-grid">
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-        </div>
-      </div>
-      <div class="dash-section">
-        <div class="skeleton-lines" style="margin-bottom:16px"><span class="skeleton-bar" style="height:20px;width:30%"></span></div>
-        <div class="cards-grid">
-          <div class="skeleton skeleton-card"></div>
-          <div class="skeleton skeleton-card"></div>
-        </div>
-      </div>`;
-  }
-}
 
 function renderDashboard(user) {
   const myLost = Store.all("items").filter((i) => i.reporterId === user.id && i.type === "lost");
