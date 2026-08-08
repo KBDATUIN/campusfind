@@ -103,6 +103,18 @@ lives in the database, not in the folder structure. (On Netlify you can
 approximate this with redirect rules or a Netlify Function; the middleware
 here is Vercel-specific.)
 
+## Configure the site URL (email links must point at your deployed site)
+
+Supabase confirmation/reset emails link back to your site using the
+**Site URL** setting — by default it points at `http://localhost:3000`, so
+real users would be sent to the wrong place.
+
+1. Supabase Dashboard → **Authentication → URL Configuration**.
+2. **Site URL:** `https://campusfind-two.vercel.app` (your deployed URL).
+3. **Redirect URLs:** add `https://campusfind-two.vercel.app/**` (and
+   `http://localhost:8080/**` if you also test locally).
+4. Save.
+
 ## Recommended settings before launch
 
 - **Authentication → Providers → Email:** keep password sign-in enabled.

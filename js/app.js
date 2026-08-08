@@ -201,6 +201,12 @@ const Store = {
   },
 
   async restoreSession() {
+    /* Capture the auth-flow event (email confirmation / password reset)
+       from the URL hash BEFORE supabase-js consumes and strips it. */
+    const hash = window.location.hash || "";
+    if (hash.includes("type=recovery")) this._authUrlEvent = "recovery";
+    else if (hash.includes("type=signup")) this._authUrlEvent = "signup";
+
     const { data: { session } } = await this.client.auth.getSession();
     if (session && session.user) {
       const profile = this.get("users", session.user.id);
@@ -343,6 +349,62 @@ function whenReady(fn) {
     }
     fn();
   });
+}
+
+/* After an email-confirmation or password-reset link, Supabase redirects the
+   user back to the site with tokens in the URL hash. This finishes those
+   flows with proper UI. */
+function handleAuthRedirect() {
+  const ev = Store._authUrlEvent;
+  if (!ev) return;
+
+  if (ev === "signup") {
+    toast("Email confirmed! Welcome to CampusFind.", "success");
+    if (!/dashboard\.html$/.test(window.location.pathname)) {
+      setTimeout(() => { window.location.href = "dashboard.html"; }, 1400);
+    }
+    return;
+  }
+
+  if (ev === "recovery") {
+    const m = openModal(`
+      <div data-title="Set a New Password"></div>
+      <div data-body>
+        <p class="modal-text">Choose a new password for your account.</p>
+        <div class="form-group">
+          <label for="reset-pw">New password</label>
+          <span class="pw-wrap">
+            <input type="password" id="reset-pw" placeholder="At least 8 characters">
+            <button type="button" class="pw-toggle" onclick="togglePw('reset-pw', this)" aria-label="Show password" title="Show password"><span>${ICONS.eye}</span></button>
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="reset-pw2">Confirm new password</label>
+          <input type="password" id="reset-pw2" placeholder="Re-enter your password">
+        </div>
+        <div class="confirm-btns">
+          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" id="reset-pw-save">Update Password</button>
+        </div>
+      </div>`);
+    const save = m.querySelector("#reset-pw-save");
+    save.addEventListener("click", async () => {
+      const pw = document.getElementById("reset-pw").value;
+      const pw2 = document.getElementById("reset-pw2").value;
+      if (pw.length < 8) { toast("Password must be at least 8 characters.", "error"); return; }
+      if (pw !== pw2) { toast("Passwords do not match.", "error"); return; }
+      save.disabled = true;
+      const { error } = await Store.client.auth.updateUser({ password: pw });
+      save.disabled = false;
+      if (error) {
+        toast("Could not update password: " + error.message, "error");
+        return;
+      }
+      closeModal();
+      toast("Password updated! You can now log in.", "success");
+      setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
+    });
+  }
 }
 
 /* Upload a compressed data URL to Supabase Storage and return its public URL. */
@@ -1018,5 +1080,8 @@ Store.init();
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(getTheme());
   hydrateIcons();
-  whenReady(renderNav);
+  whenReady(() => {
+    renderNav();
+    handleAuthRedirect();
+  });
 });
