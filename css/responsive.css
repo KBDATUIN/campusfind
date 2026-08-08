@@ -312,3 +312,11 @@ body {
   .details-panel { padding: 16px 14px; }
   .details-img { height: 230px; }
 }
+
+/* Image-backed page hero — must win over the fluid background
+   shorthand used in the mobile breakpoints above. */
+.page-head-img > .container {
+  background-image: url("../images/hero_banner.png");
+  background-size: cover;
+  background-position: center;
+}

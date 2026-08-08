@@ -1503,6 +1503,18 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 .page-head h1 { color: #fff; font-size: 30px; margin-bottom: 6px; letter-spacing: -0.02em; position: relative; z-index: 1; }
 .page-head p { color: rgba(255, 255, 255, 0.9); position: relative; z-index: 1; max-width: 64ch; }
 
+/* Image-backed page hero (home, lost items, found items) */
+.page-head-img > .container {
+  background-image: url("../images/hero_banner.png");
+  background-size: cover;
+  background-position: center;
+}
+.page-head-img > .container::before,
+.page-head-img > .container::after { display: none; }
+.page-head-img .page-eyebrow { color: rgba(255, 255, 255, 0.6); }
+.page-head-img h1 { color: rgba(255, 255, 255, 0.78); }
+.page-head-img p { color: rgba(255, 255, 255, 0.66); }
+
 /* Standard content spacing below the header hero (replaces inline styles) */
 .page-body { padding: 28px 20px 80px; }
 
