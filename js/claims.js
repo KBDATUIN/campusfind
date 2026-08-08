@@ -4,7 +4,7 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.getAttribute("data-page") === "claim") initClaimForm();
+  if (document.body.getAttribute("data-page") === "claim") whenReady(initClaimForm);
 });
 
 /* Called from item-details page */
@@ -54,7 +54,7 @@ function openClaimForm(itemId) {
     </div>`);
 
   const form = document.getElementById("claim-form");
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const explanation = sanitizeInput(form["claimExplanation"].value);
     const details = sanitizeInput(form["claimDetails"].value);
@@ -74,10 +74,10 @@ function openClaimForm(itemId) {
       return;
     }
 
-    const processEvidence = (evidence) => {
+    const processEvidence = async (evidence) => {
       const claim = Store.insert("claims", {
         id: uid("C"),
-        claimId: claimId(),
+        claimId: await Store.nextClaimId(),
         itemId,
         claimantId: user.id,
         explanation,
@@ -104,7 +104,15 @@ function openClaimForm(itemId) {
     };
 
     if (evidenceFile && evidenceFile.type.startsWith("image/")) {
-      compressImage(evidenceFile, 420, (dataUrl) => processEvidence(dataUrl));
+      compressImage(evidenceFile, 420, async (dataUrl) => {
+        let url = null;
+        try {
+          url = await uploadImage(dataUrl, "evidence");
+        } catch (err) {
+          toast("Evidence image could not be uploaded — claim submitted without it.", "warning");
+        }
+        processEvidence(url);
+      });
     } else {
       processEvidence(null);
     }

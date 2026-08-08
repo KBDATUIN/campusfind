@@ -64,13 +64,6 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    const homeWelcome = document.getElementById("home-welcome");
-    const homeUser = currentUser();
-    if (homeUser) {
-      const first = (homeUser.fullName || "").split(/\s+/)[0];
-      homeWelcome.textContent = first ? `Welcome back, ${first}` : "Welcome back";
-    }
-
     function renderHomeStats() {
       const items = Store.all("items");
       const stats = [
@@ -93,7 +86,15 @@
         : emptyState("No items yet", "Be the first to report an item on campus.", `<a href="report-lost.html" class="btn btn-primary">Report an Item</a>`);
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    /* The store is hydrated asynchronously from Supabase, so all data
+       reads happen once the app is ready. */
+    whenReady(() => {
+      const homeWelcome = document.getElementById("home-welcome");
+      const homeUser = currentUser();
+      if (homeUser) {
+        const first = (homeUser.fullName || "").split(/\s+/)[0];
+        homeWelcome.textContent = first ? `Welcome back, ${first}` : "Welcome back";
+      }
       renderHomeStats();
       renderRecent();
     });

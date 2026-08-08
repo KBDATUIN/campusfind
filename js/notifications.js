@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(() => refreshBell(), 15000);
 
   if (document.body.getAttribute("data-page") === "dashboard") {
-    renderNotificationFeed();
+    whenReady(renderNotificationFeed);
   }
 });
 

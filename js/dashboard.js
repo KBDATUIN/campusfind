@@ -5,10 +5,12 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.getAttribute("data-page") !== "dashboard") return;
-  const user = requireAuth();
-  if (!user) return;
-  skeletonDashboard();
-  setTimeout(() => renderDashboard(user), 320);
+  whenReady(() => {
+    const user = requireAuth();
+    if (!user) return;
+    skeletonDashboard();
+    setTimeout(() => renderDashboard(user), 320);
+  });
 });
 
 function skeletonDashboard() {

@@ -113,163 +113,252 @@ const CLAIM_STATUS_META = {
   completed: { label: "Completed", cls: "badge-completed" },
 };
 
-/* ---------------- Seed data ---------------- */
-function seedData() {
-  const daysAgo = (n) => new Date(Date.now() - n * 86400000).toISOString();
-  const item = (o) => ({
-    id: uid("I"),
-    reportId: o.reportId,
-    type: o.type,
-    name: o.name,
-    category: o.category,
-    description: o.description,
-    brand: o.brand,
-    color: o.color,
-    location: o.location,
-    date: o.date,
-    time: o.time,
-    image: null,
-    status: o.status || "pending",
-    reporterId: o.reporterId,
-    identifyingFeatures: o.identifyingFeatures || "",
-    contactInfo: o.contactInfo || "",
-    storageLocation: o.storageLocation || "",
-    additionalNotes: o.additionalNotes || "",
-    rejectReason: o.rejectReason || "",
-    createdAt: o.createdAt || daysAgo(2),
-    updatedAt: o.createdAt || daysAgo(2),
-  });
+/* Seed data has moved to supabase/schema.sql — the app now reads and
+   writes everything through Supabase (see the Store object below). */
 
-  const users = [
-    { id: "U-ADMIN1", fullName: "Dr. Sarah Mitchell", schoolId: "ADM-001", email: "admin@campusfind.edu", passwordHash: hashPassword("admin123"), role: "admin", status: "active", accountType: "staff", createdAt: daysAgo(120) },
-    { id: "U-STU1", fullName: "James Carter", schoolId: "STU-2401", email: "james.carter@campusfind.edu", passwordHash: hashPassword("student123"), role: "student", status: "active", accountType: "student", createdAt: daysAgo(90) },
-    { id: "U-STU2", fullName: "Priya Sharma", schoolId: "STU-1893", email: "priya.sharma@campusfind.edu", passwordHash: hashPassword("student123"), role: "student", status: "active", accountType: "student", createdAt: daysAgo(75) },
-    { id: "U-STU3", fullName: "Daniel Okafor", schoolId: "STU-2210", email: "daniel.okafor@campusfind.edu", passwordHash: hashPassword("student123"), role: "student", status: "active", accountType: "student", createdAt: daysAgo(60) },
-    { id: "U-STU4", fullName: "Emily Nguyen", schoolId: "STU-1755", email: "emily.nguyen@campusfind.edu", passwordHash: hashPassword("student123"), role: "student", status: "suspended", accountType: "student", createdAt: daysAgo(45) },
-    { id: "U-STF1", fullName: "Ms. Elena Rodriguez", schoolId: "STF-120", email: "elena.rodriguez@campusfind.edu", passwordHash: hashPassword("staff123"), role: "staff", status: "active", accountType: "staff", createdAt: daysAgo(200) },
-    { id: "U-STF2", fullName: "Mr. Marcus Webb", schoolId: "STF-096", email: "marcus.webb@campusfind.edu", passwordHash: hashPassword("staff123"), role: "staff", status: "active", accountType: "staff", createdAt: daysAgo(150) },
-    { id: "U-STU5", fullName: "Lucas Bennett", schoolId: "STU-2034", email: "lucas.bennett@campusfind.edu", passwordHash: hashPassword("student123"), role: "student", status: "active", accountType: "student", createdAt: daysAgo(20) },
-  ];
-
-  const items = [
-    // LOST items
-    item({ reportId: "LF-2026-0001", type: "lost", name: "MacBook Pro 14\"", category: "Electronics", description: "Silver MacBook Pro 14 inch with a small dent on the left corner. Charger not included. Home screen shows a mountain wallpaper.", brand: "Apple", color: "Silver", location: "Main Library", date: daysAgo(1), time: "15:30", status: "verified", reporterId: "U-STU1", identifyingFeatures: "Sticker of a fox on the lid, tiny dent on left corner", additionalNotes: "Very important — all my project files are on it.", createdAt: daysAgo(1) }),
-    item({ reportId: "LF-2026-0002", type: "lost", name: "Student ID Card", category: "ID/Card", description: "Blue student ID card with photo. Name on card is James Carter.", brand: "Campus ID Office", color: "Blue", location: "Student Center", date: daysAgo(3), time: "12:10", status: "verified", reporterId: "U-STU1", identifyingFeatures: "Name: James Carter, ID ends in 2401", createdAt: daysAgo(3) }),
-    item({ reportId: "LF-2026-0003", type: "lost", name: "Wireless Earbuds", category: "Electronics", description: "White wireless earbuds in a charging case. Case has a small scratch near the hinge.", brand: "Sony", color: "White", location: "Gymnasium", date: daysAgo(2), time: "17:45", status: "pending", reporterId: "U-STU2", identifyingFeatures: "Scratch on the charging case hinge", createdAt: daysAgo(2) }),
-    item({ reportId: "LF-2026-0004", type: "lost", name: "Leather Wallet", category: "Wallet/Purse", description: "Brown leather wallet with a metal clasp. Contains a few cards and some cash.", brand: "Fossil", color: "Brown", location: "Cafeteria", date: daysAgo(4), time: "13:20", status: "verified", reporterId: "U-STF1", identifyingFeatures: "Metal clasp engraved with initials ER", createdAt: daysAgo(4) }),
-    item({ reportId: "LF-2026-0005", type: "lost", name: "House Keys", category: "Keys", description: "Set of 4 keys on a blue keychain with a small rubber duck charm.", brand: "—", color: "Silver", location: "Science Building", date: daysAgo(5), time: "16:00", status: "verified", reporterId: "U-STU3", identifyingFeatures: "Rubber duck keychain charm", createdAt: daysAgo(5) }),
-    item({ reportId: "LF-2026-0006", type: "lost", name: "Navy Blue Jacket", category: "Clothing", description: "Navy blue winter jacket, size M. Zipped pockets. Left pocket contains a train ticket.", brand: "North Face", color: "Navy", location: "Lecture Hall B", date: daysAgo(6), time: "14:40", status: "rejected", reporterId: "U-STU4", rejectReason: "Reported item appears to be a duplicate of an already resolved listing. Please contact the office for details.", createdAt: daysAgo(6) }),
-    item({ reportId: "LF-2026-0007", type: "lost", name: "Calculus Textbook", category: "Books", description: "Calculus: Early Transcendentals, 9th edition. Wrapped in brown paper.", brand: "Cengage", color: "Brown", location: "Engineering Building", date: daysAgo(7), time: "11:30", status: "verified", reporterId: "U-STU5", identifyingFeatures: "Wrapped in brown paper, name written inside cover", createdAt: daysAgo(7) }),
-    item({ reportId: "LF-2026-0008", type: "lost", name: "USB-C Charger", category: "Electronics", description: "White Apple-style USB-C 61W power adapter with braided cable.", brand: "Apple", color: "White", location: "Student Center", date: daysAgo(8), time: "10:15", status: "verified", reporterId: "U-STU2", identifyingFeatures: "Braided white cable, taped label with initials PS", createdAt: daysAgo(8) }),
-
-    // FOUND items
-    item({ reportId: "FD-2026-0001", type: "found", name: "MacBook Pro", category: "Electronics", description: "Silver MacBook Pro found plugged in near the 2nd floor study tables of the library. Slightly dented on the left corner.", brand: "Apple", color: "Silver", location: "Main Library", date: daysAgo(1), time: "16:20", status: "verified", reporterId: "U-STF2", storageLocation: "Library Front Desk, Locker B-12", identifyingFeatures: "Dent on left corner, fox sticker on lid", createdAt: daysAgo(1) }),
-    item({ reportId: "FD-2026-0002", type: "found", name: "Wireless Earbuds Case", category: "Electronics", description: "White earbud case found in the locker room. No earbuds inside the case.", brand: "Sony", color: "White", location: "Gymnasium", date: daysAgo(2), time: "18:05", status: "verified", reporterId: "U-STU5", storageLocation: "Gym Office", identifyingFeatures: "Scratch near the hinge", createdAt: daysAgo(2) }),
-    item({ reportId: "FD-2026-0003", type: "found", name: "Brown Wallet", category: "Wallet/Purse", description: "Brown leather wallet found on a cafeteria table. Contains cards and a small amount of cash.", brand: "Fossil", color: "Brown", location: "Cafeteria", date: daysAgo(4), time: "13:45", status: "claim-approved", reporterId: "U-STU3", storageLocation: "Security Office Safe", identifyingFeatures: "Metal clasp, initials ER engraved", createdAt: daysAgo(4) }),
-    item({ reportId: "FD-2026-0004", type: "found", name: "Keyring with Keys", category: "Keys", description: "Four keys on a blue keyring with a duck charm, found in Science Building room 204.", brand: "—", color: "Blue", location: "Science Building", date: daysAgo(5), time: "16:30", status: "returned", reporterId: "U-STF1", storageLocation: "Science Building Reception", identifyingFeatures: "Blue keyring with rubber duck charm", createdAt: daysAgo(5) }),
-    item({ reportId: "FD-2026-0005", type: "found", name: "Graphing Calculator", category: "Electronics", description: "TI-84 Plus graphing calculator found in Lecture Hall B.", brand: "Texas Instruments", color: "Black", location: "Lecture Hall B", date: daysAgo(9), time: "09:50", status: "verified", reporterId: "U-STF2", storageLocation: "Lecture Hall B Podium", identifyingFeatures: "Name sticker partially peeled", createdAt: daysAgo(9) }),
-    item({ reportId: "FD-2026-0006", type: "found", name: "Backpack", category: "Accessories", description: "Black school backpack with a red zipper found near the fountain in the quad.", brand: "Nike", color: "Black", location: "Quad Area", date: daysAgo(10), time: "15:15", status: "pending", reporterId: "U-STU1", storageLocation: "Lost & Found Office", identifyingFeatures: "Red zipper, white Nike logo", createdAt: daysAgo(10) }),
-    item({ reportId: "FD-2026-0007", type: "found", name: "Reading Glasses", category: "Accessories", description: "Black-framed reading glasses in a hard navy case found in the faculty lounge.", brand: "—", color: "Black", location: "Admin Building", date: daysAgo(11), time: "12:00", status: "verified", reporterId: "U-STF1", storageLocation: "Admin Office", identifyingFeatures: "Navy hard case", createdAt: daysAgo(11) }),
-    item({ reportId: "FD-2026-0008", type: "found", name: "Umbrella", category: "Other", description: "Dark blue umbrella with wooden handle, found by the main entrance.", brand: "—", color: "Dark Blue", location: "Main Entrance", date: daysAgo(12), time: "08:30", status: "returned", reporterId: "U-STU4", storageLocation: "Security Booth", identifyingFeatures: "Wooden hook handle", createdAt: daysAgo(12) }),
-  ];
-
-  const claims = [
-    { id: uid("C"), claimId: "CL-2026-0001", itemId: items[8].id, claimantId: "U-STU1", explanation: "This is my MacBook. I was working on my thesis at the library 2nd floor and left it plugged in while I went to the restroom. It has my project files and a fox sticker.", identifyingDetails: "Fox sticker on the lid and a small dent on the left corner from a previous fall.", evidence: null, status: "approved", adminNotes: "Claimant description matches identifying features exactly. Arranged handover at library front desk.", createdAt: daysAgo(1) },
-    { id: uid("C"), claimId: "CL-2026-0002", itemId: items[9].id, claimantId: "U-STU2", explanation: "I lost my white Sony earbuds case at the gym after practice. The scratch on the hinge matches the damage from when I dropped them.", identifyingDetails: "Small scratch near the hinge of the case.", evidence: null, status: "pending", adminNotes: "", createdAt: daysAgo(1) },
-    { id: uid("C"), claimId: "CL-2026-0003", itemId: items[10].id, claimantId: "U-STF1", explanation: "This wallet is mine — I ate lunch at the cafeteria and must have left it on the table. It has my staff ID and debit cards.", identifyingDetails: "Metal clasp engraved with initials ER for Elena Rodriguez.", evidence: null, status: "completed", adminNotes: "Item handed over at security office. Receipt signed.", createdAt: daysAgo(3) },
-    { id: uid("C"), claimId: "CL-2026-0004", itemId: items[11].id, claimantId: "U-STU3", explanation: "These are my house keys with the duck keychain my sister gave me. I dropped them in the Science Building.", identifyingDetails: "Rubber duck charm on a blue keyring.", evidence: null, status: "completed", adminNotes: "Verified and returned at Science Building reception.", createdAt: daysAgo(5) },
-    { id: uid("C"), claimId: "CL-2026-0005", itemId: items[12].id, claimantId: "U-STU2", explanation: "I lost my TI-84 calculator in Lecture Hall B during my math final.", identifyingDetails: "Partially peeled name sticker.", evidence: null, status: "investigation", adminNotes: "Requested the claimant bring the original purchase receipt.", createdAt: daysAgo(8) },
-    { id: uid("C"), claimId: "CL-2026-0006", itemId: items[15].id, claimantId: "U-STF1", explanation: "My reading glasses went missing from my desk in the faculty lounge. Navy case with glasses inside.", identifyingDetails: "Black frames, navy hard case.", evidence: null, status: "rejected", adminNotes: "Glasses were claimed and returned to a different staff member the previous day. Item was re-checked.", createdAt: daysAgo(10) },
-  ];
-
-  const notifications = [
-    { id: uid("N"), userId: "U-STU1", title: "Report Approved", message: "Your report for MacBook Pro 14\" (LF-2026-0001) has been verified and published.", read: false, createdAt: daysAgo(1) },
-    { id: uid("N"), userId: "U-STU1", title: "Claim Approved", message: "Your claim CL-2026-0001 for MacBook Pro has been approved. Pick it up at the Library Front Desk.", read: false, createdAt: daysAgo(1) },
-    { id: uid("N"), userId: "U-STU2", title: "Possible Match Found", message: "A found item may match your lost Wireless Earbuds report. Check the details.", read: false, createdAt: daysAgo(2) },
-    { id: uid("N"), userId: "U-STU2", title: "Claim Status Changed", message: "Your claim CL-2026-0002 is now Pending Review.", read: true, createdAt: daysAgo(1) },
-    { id: uid("N"), userId: "U-STF1", title: "Item Returned", message: "Your found item Keyring with Keys (FD-2026-0004) has been returned to its owner. Thank you!", read: true, createdAt: daysAgo(4) },
-    { id: uid("N"), userId: "U-STU4", title: "Report Rejected", message: "Your report for Navy Blue Jacket (LF-2026-0006) was rejected. Reason: duplicate listing.", read: false, createdAt: daysAgo(6) },
-  ];
-
-  const activityLogs = [
-    { id: uid("L"), adminId: "U-ADMIN1", action: "Approved report", target: "LF-2026-0001 (MacBook Pro 14\")", timestamp: daysAgo(1) },
-    { id: uid("L"), adminId: "U-ADMIN1", action: "Approved claim", target: "CL-2026-0001 (MacBook Pro 14\")", timestamp: daysAgo(1) },
-    { id: uid("L"), adminId: "U-ADMIN1", action: "Rejected report", target: "LF-2026-0006 (Navy Blue Jacket)", timestamp: daysAgo(5) },
-    { id: uid("L"), adminId: "U-ADMIN1", action: "Marked item returned", target: "FD-2026-0004 (Keyring with Keys)", timestamp: daysAgo(4) },
-    { id: uid("L"), adminId: "U-ADMIN1", action: "Suspended user", target: "emily.nguyen@campusfind.edu", timestamp: daysAgo(3) },
-  ];
-
-  return { version: 1, users, items, claims, notifications, activityLogs };
-}
-
-/* ---------------- Storage layer ---------------- */
+/* ---------------- Storage layer (Supabase-backed) --------------
+   The app keeps a synchronous in-memory snapshot of every collection
+   so all existing call sites work unchanged. Writes are applied to
+   memory immediately (snappy UI) and mirrored to Supabase in the
+   background. Store.init() hydrates the snapshot from the database
+   and restores the auth session on page load. */
 const Store = {
-  DB_KEY: "campusfind_db",
   SESSION_KEY: "campusfind_session",
+  client: null,
+  data: { users: [], items: [], claims: [], notifications: [], activityLogs: [], settings: [] },
+  bootError: null,
+  ready: null,
 
-  data: null,
+  TABLE_OF: {
+    users: "users",
+    items: "items",
+    claims: "claims",
+    notifications: "notifications",
+    activityLogs: "activity_logs",
+    settings: "settings",
+  },
 
-  load() {
-    try {
-      const raw = localStorage.getItem(this.DB_KEY);
-      this.data = raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      this.data = null;
+  /* snake_case (database) → camelCase (app) column names */
+  COLUMN_MAP: {
+    users: { full_name: "fullName", school_id: "schoolId", account_type: "accountType", created_at: "createdAt" },
+    items: { report_id: "reportId", reporter_id: "reporterId", identifying_features: "identifyingFeatures", contact_info: "contactInfo", storage_location: "storageLocation", additional_notes: "additionalNotes", reject_reason: "rejectReason", created_at: "createdAt", updated_at: "updatedAt" },
+    claims: { claim_id: "claimId", item_id: "itemId", claimant_id: "claimantId", identifying_details: "identifyingDetails", admin_notes: "adminNotes", created_at: "createdAt", updated_at: "updatedAt" },
+    notifications: { user_id: "userId", created_at: "createdAt" },
+    activityLogs: { admin_id: "adminId" },
+    settings: { site_name: "siteName", contact_email: "contactEmail", auto_match: "autoMatch", notify_finders: "notifyFinders" },
+  },
+
+  dbToObj(coll, row) {
+    const map = this.COLUMN_MAP[coll] || {};
+    const obj = {};
+    Object.keys(row).forEach((k) => { obj[map[k] || k] = row[k]; });
+    return obj;
+  },
+
+  objToDb(coll, obj) {
+    const map = this.COLUMN_MAP[coll] || {};
+    const rev = {};
+    Object.keys(map).forEach((db) => { rev[map[db]] = db; });
+    const row = {};
+    Object.keys(obj).forEach((k) => { row[rev[k] || k] = obj[k]; });
+    return row;
+  },
+
+  /* ---------- boot ---------- */
+  init() {
+    this.ready = (async () => {
+      try {
+        /* Resolve config.js relative to app.js itself so it works from any
+           folder depth and on subpath deployments (e.g. GitHub Pages). */
+        let cfgPath = "js/config.js";
+        const appScript = document.querySelector('script[src*="app.js"]');
+        if (appScript && appScript.src) {
+          cfgPath = new URL("js/config.js", appScript.src).href;
+        }
+        await loadScript(cfgPath);
+        if (!window.CAMPUSFIND_CONFIG || !window.CAMPUSFIND_CONFIG.supabaseUrl || !window.CAMPUSFIND_CONFIG.supabaseAnonKey) {
+          throw new Error("Supabase is not configured. Open js/config.js and paste your project URL and anon key.");
+        }
+        this.client = await initSupabaseClient(window.CAMPUSFIND_CONFIG);
+        await this.hydrate();
+        await this.restoreSession();
+      } catch (e) {
+        this.bootError = e.message || String(e);
+        console.error("CampusFind boot error:", e);
+      }
+    })();
+    return this.ready;
+  },
+
+  async hydrate() {
+    const tables = this.TABLE_OF;
+    for (const coll of Object.keys(tables)) {
+      const { data, error } = await this.client.from(tables[coll]).select("*");
+      if (error) throw error;
+      this.data[coll] = (data || []).map((r) => this.dbToObj(coll, r));
     }
-    if (!this.data || this.data.version !== 1) {
-      this.data = seedData();
-      this.save();
+  },
+
+  async restoreSession() {
+    const { data: { session } } = await this.client.auth.getSession();
+    if (session && session.user) {
+      const profile = this.get("users", session.user.id);
+      if (profile && profile.status === "active") {
+        localStorage.setItem(this.SESSION_KEY, session.user.id);
+      } else {
+        await this.client.auth.signOut();
+        localStorage.removeItem(this.SESSION_KEY);
+      }
     }
+    this.client.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "SIGNED_OUT") {
+        localStorage.removeItem(this.SESSION_KEY);
+      } else if (event === "SIGNED_IN" && nextSession) {
+        const profile = this.data.users.find((u) => u.id === nextSession.user.id);
+        if (profile) {
+          localStorage.setItem(this.SESSION_KEY, nextSession.user.id);
+        } else {
+          /* Brand-new account (e.g. just confirmed via email) — fetch its profile. */
+          this.client
+            .from("users")
+            .select("*")
+            .eq("id", nextSession.user.id)
+            .maybeSingle()
+            .then(({ data }) => {
+              if (data) {
+                this.data.users.push(this.dbToObj("users", data));
+                localStorage.setItem(this.SESSION_KEY, nextSession.user.id);
+              }
+            })
+            .catch(() => {});
+        }
+      }
+    });
   },
 
-  save() {
-    localStorage.setItem(this.DB_KEY, JSON.stringify(this.data));
-  },
-
-  reset() {
-    localStorage.removeItem(this.DB_KEY);
-    this.data = null;
-    this.load();
-  },
-
-  /* collection helpers */
+  /* ---------- synchronous snapshot API (unchanged for call sites) ---------- */
   all(coll) { return this.data ? this.data[coll] || [] : []; },
   get(coll, id) { return this.data ? (this.data[coll] || []).find((r) => r.id === id) : undefined; },
+
   insert(coll, record) {
     this.data[coll].push(record);
-    this.save();
+    this.persist(coll, record, "insert");
     return record;
   },
+
   update(coll, id, patch) {
     const rec = this.get(coll, id);
     if (rec) Object.assign(rec, patch);
-    this.save();
+    if (rec) this.persist(coll, rec, "update");
     return rec;
   },
+
   remove(coll, id) {
     this.data[coll] = this.data[coll].filter((r) => r.id !== id);
-    this.save();
+    this.persist(coll, { id }, "remove");
+  },
+
+  /* ---------- async write-through ---------- */
+  persist(coll, record, op) {
+    if (!this.client) return;
+    const table = this.TABLE_OF[coll];
+    const row = this.objToDb(coll, record);
+    let q;
+    if (op === "remove") q = this.client.from(table).delete().eq("id", record.id);
+    else if (op === "update") q = this.client.from(table).update(row).eq("id", record.id);
+    else q = this.client.from(table).insert(row);
+    q.then(({ error }) => {
+      if (error) {
+        console.error("Supabase write failed:", coll, error);
+        toast("Could not save to the server. Check your connection.", "error");
+      }
+    });
+  },
+
+  /* ---------- server-side helpers ---------- */
+  async nextSeq(prefix) {
+    try {
+      const { data, error } = await this.client.rpc("next_counter", { cname: prefix });
+      if (error) throw error;
+      return String(data).padStart(4, "0");
+    } catch (e) {
+      const used = this.data.items.filter((i) => i.reportId && i.reportId.startsWith(prefix)).length;
+      return String(used + 1).padStart(4, "0");
+    }
+  },
+
+  async nextReportId(type) {
+    const year = new Date().getFullYear();
+    const prefix = (type === "lost" ? "LF" : "FD") + "-" + year;
+    return prefix + "-" + (await this.nextSeq(prefix));
+  },
+
+  async nextClaimId() {
+    const year = new Date().getFullYear();
+    return "CL-" + year + "-" + (await this.nextSeq("CL-" + year));
+  },
+
+  async saveSettings(obj) {
+    const row = this.objToDb("settings", Object.assign({ id: 1 }, obj));
+    const { error } = await this.client.from("settings").upsert(row);
+    if (error) throw error;
+    this.data.settings = [this.dbToObj("settings", row)];
+  },
+
+  async resetDemo() {
+    const { error } = await this.client.rpc("reset_demo_data");
+    if (error) throw error;
+    await this.hydrate();
   },
 };
+
+/* ---------------- Supabase client bootstrap ---------------- */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error("Failed to load " + src));
+    document.head.appendChild(s);
+  });
+}
+
+async function initSupabaseClient(cfg) {
+  if (!window.supabase) {
+    await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
+  }
+  return window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+}
+
+/* Run fn once the store has been hydrated (or after a boot failure). */
+function whenReady(fn) {
+  Store.ready.then(() => {
+    if (Store.bootError && !whenReady._warned) {
+      whenReady._warned = true;
+      toast(Store.bootError, "error");
+    }
+    fn();
+  });
+}
+
+/* Upload a compressed data URL to Supabase Storage and return its public URL. */
+async function uploadImage(dataUrl, folder) {
+  if (!Store.client) throw new Error("Not connected to the server.");
+  const blob = await (await fetch(dataUrl)).blob();
+  const ext = blob.type === "image/png" ? "png" : "jpg";
+  const path = (folder || "items") + "/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + "." + ext;
+  const { data, error } = await Store.client.storage.from("item-images").upload(path, blob, { contentType: blob.type });
+  if (error) throw error;
+  return Store.client.storage.from("item-images").getPublicUrl(path).data.publicUrl;
+}
 
 /* ---------------- Utility helpers ---------------- */
 function uid(prefix) {
   return prefix + "-" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 7).toUpperCase();
 }
 
-function reportId(type) {
-  const prefix = type === "lost" ? "LF" : "FD";
-  const year = new Date().getFullYear();
-  const count = Store.all("items").filter((i) => i.reportId && i.reportId.startsWith(prefix + "-" + year)).length + 1;
-  return `${prefix}-${year}-${String(count).padStart(4, "0")}`;
-}
-
-function claimId() {
-  const year = new Date().getFullYear();
-  const count = Store.all("claims").filter((c) => c.claimId && c.claimId.startsWith("CL-" + year)).length + 1;
-  return `CL-${year}-${String(count).padStart(4, "0")}`;
-}
-
+/* Report/claim reference IDs are now generated server-side in
+   sequential order via Store.nextReportId() / Store.nextClaimId(). */
 function fmtDate(iso, withTime) {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -307,13 +396,8 @@ function sanitizeInput(str) {
   return String(str == null ? "" : str).trim().replace(/[<>]/g, "");
 }
 
-function hashPassword(pw) {
-  let h = 5381;
-  for (let i = 0; i < pw.length; i++) {
-    h = ((h << 5) + h + pw.charCodeAt(i)) | 0;
-  }
-  return "h$" + (h >>> 0).toString(36) + "$" + pw.length;
-}
+/* Password hashing is now handled server-side by Supabase Auth
+   (bcrypt). No credential material ever touches the client. */
 
 function wordOverlap(a, b) {
   const words = (s) =>
@@ -347,6 +431,7 @@ function clearSession() {
 }
 
 function logout() {
+  if (Store.client) Store.client.auth.signOut().catch(() => {});
   clearSession();
   const isAdmin = window.location.pathname.includes("/admin/");
   window.location.href = isAdmin ? "../index.html" : "index.html";
@@ -361,13 +446,17 @@ function requireAuth() {
   return u;
 }
 
+function isStaffOrAdmin(user) {
+  return !!user && (user.role === "admin" || user.role === "staff");
+}
+
 function requireAdmin() {
   const u = currentUser();
   if (!u) {
     window.location.href = "../login.html";
     return null;
   }
-  if (u.role !== "admin") {
+  if (!isStaffOrAdmin(u)) {
     window.location.href = "../index.html";
     return null;
   }
@@ -613,7 +702,8 @@ function renderNav() {
   let acctHtml = "";
   let headerRight = "";
   if (user) {
-    const dashUrl = user.role === "admin" ? "admin/dashboard.html" : "dashboard.html";
+    const staffOrAdmin = isStaffOrAdmin(user);
+    const dashUrl = staffOrAdmin ? "admin/dashboard.html" : "dashboard.html";
     const initials = user.fullName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
     const roleLbl = user.role === "admin" ? "Administrator" : user.accountType === "staff" ? "Staff Member" : "Student";
     acctHtml = `
@@ -900,12 +990,13 @@ function hydrateIcons() {
 }
 
 /* ---------------- Init ---------------- */
-/* Load data synchronously so inline scripts that run before
-   DOMContentLoaded (e.g. the home stats renderer) can read the store. */
-Store.load();
+/* Boot the app: load config, connect to Supabase, hydrate the in-memory
+   store and restore the session. Page modules use whenReady() so they
+   only run once data is available. */
+Store.init();
 
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(getTheme());
-  renderNav();
   hydrateIcons();
+  whenReady(renderNav);
 });

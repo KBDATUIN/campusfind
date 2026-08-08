@@ -8,16 +8,18 @@
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.body.getAttribute("data-page") || "";
   if (!page.startsWith("admin-")) return;
-  const admin = requireAdmin();
-  if (!admin) return;
+  whenReady(() => {
+    const admin = requireAdmin();
+    if (!admin) return;
 
-  renderAdminShell(admin, page);
+    renderAdminShell(admin, page);
 
-  if (page === "admin-dashboard") initAdminDashboard(admin);
-  if (page === "admin-reports") initAdminReports();
-  if (page === "admin-claims") initAdminClaims();
-  if (page === "admin-users") initAdminUsers(admin);
-  if (page === "admin-settings") initAdminSettings(admin);
+    if (page === "admin-dashboard") initAdminDashboard(admin);
+    if (page === "admin-reports") initAdminReports();
+    if (page === "admin-claims") initAdminClaims();
+    if (page === "admin-users") initAdminUsers(admin);
+    if (page === "admin-settings") initAdminSettings(admin);
+  });
 });
 
 /* ---------------- Admin shell (same design as the public pages) ---------------- */
@@ -36,6 +38,7 @@ function renderAdminShell(admin, page) {
   const pendingClaims = Store.all("claims").filter((c) => c.status === "pending" || c.status === "investigation").length;
   const initials = admin.fullName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   const pageLabel = (menu.find((m) => m.key === page) || {}).label || "Admin";
+  const roleLabel = admin.role === "staff" ? "Staff Member" : "Administrator";
 
   const badge = (n) => (n ? `<span class="bell-badge show" style="position:static;border:none">${n}</span>` : "");
 
@@ -68,7 +71,7 @@ function renderAdminShell(admin, page) {
             <span class="side-avatar" aria-hidden="true">${esc(initials)}</span>
             <span class="side-user-meta">
               <span class="side-user-name">${esc(admin.fullName)}</span>
-              <span class="side-user-role">Administrator</span>
+              <span class="side-user-role">${esc(roleLabel)}</span>
             </span>
           </span>
           <a class="side-acct-item" href="dashboard.html" title="Admin dashboard"><span class="s-ico" aria-hidden="true">${ICONS.dashboard}</span><span class="acct-label">Dashboard</span></a>
@@ -822,11 +825,17 @@ function deleteUser(id) {
   confirmDialog(
     "Delete account permanently?",
     "This permanently deletes the account of " + u.fullName + " (" + u.email + "). Their reports and claims will remain but be shown as removed.",
-    () => {
-      Store.remove("users", id);
-      const admin = currentUser();
-      if (admin) logActivity(admin.id, "Deleted user", u.email);
-      toast("User account deleted.", "danger");
+    async () => {
+      try {
+        const { error } = await Store.client.rpc("admin_delete_user", { p_uid: id });
+        if (error) throw error;
+        Store.remove("users", id);
+        const admin = currentUser();
+        if (admin) logActivity(admin.id, "Deleted user", u.email);
+        toast("User account deleted.", "success");
+      } catch (err) {
+        toast("Could not delete account: " + (err.message || "server error"), "error");
+      }
       reloadAdminTable();
     },
     "Delete Account",
@@ -873,38 +882,45 @@ function initAdminSettings(admin) {
 
   const form = document.getElementById("settings-form");
   if (!form) return;
-  form["siteName"].value = "CampusFind";
-  form["contactEmail"].value = "lostandfound@campusfind.edu";
-  form["autoMatch"].checked = true;
-  form["notifyFinders"].checked = true;
+  const current = (Store.data.settings && Store.data.settings[0]) || {};
+  form["siteName"].value = current.siteName || "CampusFind";
+  form["contactEmail"].value = current.contactEmail || "";
+  form["autoMatch"].checked = current.autoMatch !== false;
+  form["notifyFinders"].checked = current.notifyFinders !== false;
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const siteName = sanitizeInput(form["siteName"].value) || "CampusFind";
     const contactEmail = sanitizeInput(form["contactEmail"].value);
-    localStorage.setItem("campusfind_settings", JSON.stringify({
-      siteName,
-      contactEmail,
-      autoMatch: form["autoMatch"].checked,
-      notifyFinders: form["notifyFinders"].checked,
-    }));
-    const u = currentUser();
-    if (u) logActivity(u.id, "Updated system settings", "Site: " + siteName);
-    toast("Settings saved.", "success");
+    try {
+      await Store.saveSettings({
+        siteName,
+        contactEmail,
+        autoMatch: form["autoMatch"].checked,
+        notifyFinders: form["notifyFinders"].checked,
+      });
+      const u = currentUser();
+      if (u) logActivity(u.id, "Updated system settings", "Site: " + siteName);
+      toast("Settings saved.", "success");
+    } catch (err) {
+      toast("Could not save settings: " + (err.message || "server error"), "error");
+    }
   });
 
   const resetBtn = document.getElementById("reset-data");
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       confirmDialog(
-        "Reset all demo data?",
-        "This wipes all users, reports, claims and notifications and restores the original sample data. This cannot be undone.",
-        () => {
-          Store.reset();
-          const u = currentUser();
-          if (u) setSession(u);
-          toast("Demo data has been reset.", "success");
-          setTimeout(() => window.location.reload(), 800);
+        "Reset all data?",
+        "This wipes all reports, claims, notifications and activity logs and restores the sample data. User accounts are kept. This cannot be undone.",
+        async () => {
+          try {
+            await Store.resetDemo();
+            toast("Data reset complete.", "success");
+            setTimeout(() => window.location.reload(), 900);
+          } catch (err) {
+            toast("Could not reset data: " + (err.message || "server error"), "error");
+          }
         },
         "Reset Data",
         true

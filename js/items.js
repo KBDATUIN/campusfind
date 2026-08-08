@@ -5,11 +5,13 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const page = document.body.getAttribute("data-page") || "";
-  if (page === "lost" || page === "found") initListings(page);
-  if (page === "details") initDetails();
-  if (page === "report-lost") initReport("lost");
-  if (page === "report-found") initReport("found");
+  whenReady(() => {
+    const page = document.body.getAttribute("data-page") || "";
+    if (page === "lost" || page === "found") initListings(page);
+    if (page === "details") initDetails();
+    if (page === "report-lost") initReport("lost");
+    if (page === "report-found") initReport("found");
+  });
 });
 
 /* ---------------- Listings (lost / found) ---------------- */
@@ -263,7 +265,7 @@ function initReport(type) {
     });
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const user = currentUser();
     if (!user) return;
@@ -285,9 +287,18 @@ function initReport(type) {
       return;
     }
 
+    let imageUrl = null;
+    if (uploadedImage) {
+      try {
+        imageUrl = await uploadImage(uploadedImage, "items");
+      } catch (err) {
+        toast("Photo could not be uploaded — report saved without it.", "warning");
+      }
+    }
+
     const item = Store.insert("items", {
       id: uid("I"),
-      reportId: reportId(type),
+      reportId: await Store.nextReportId(type),
       type,
       name: sanitizeInput(form["name"].value),
       category: form["category"].value,
@@ -297,7 +308,7 @@ function initReport(type) {
       location: sanitizeInput(form["location"].value),
       date: new Date(form["date"].value).toISOString(),
       time: sanitizeInput(form["time"].value),
-      image: uploadedImage,
+      image: imageUrl,
       status: "pending",
       reporterId: user.id,
       identifyingFeatures: sanitizeInput(form["identifyingFeatures"].value),

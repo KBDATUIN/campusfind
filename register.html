@@ -27,19 +27,11 @@
           <input type="text" name="fullName" id="reg-full-name" placeholder="e.g. Jordan Smith" required>
           <span class="field-error">Please enter your full name (min 3 characters).</span>
         </div>
-        <div class="form-grid mb-16">
-          <div class="form-group">
-            <label for="reg-school-id">Student/Staff ID <span class="req">*</span></label>
-            <input type="text" name="schoolId" id="reg-school-id" placeholder="e.g. STU-2401" required>
-            <span class="field-error">Please enter your school ID.</span>
-          </div>
-          <div class="form-group">
-            <label for="reg-account-type">Account Type <span class="req">*</span></label>
-            <select name="accountType" id="reg-account-type" required>
-              <option value="student">Student</option>
-              <option value="staff">Staff</option>
-            </select>
-          </div>
+        <div class="form-group mb-16">
+          <label for="reg-school-id">Student ID <span class="req">*</span></label>
+          <input type="text" name="schoolId" id="reg-school-id" placeholder="e.g. STU-2401" required>
+          <span class="field-error">Please enter your school ID.</span>
+          <span class="hint">Staff and admin accounts are created by the school office, not through self-signup.</span>
         </div>
         <div class="form-group mb-16">
           <label for="reg-email">School Email <span class="req">*</span></label>
