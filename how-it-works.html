@@ -48,7 +48,9 @@
         </div>
       </div>
 
-      <div class="empty-state" style="max-width:640px;margin:56px auto 0">
+      <!-- Shown only to logged-out visitors; updateAuthCTA() in app.js
+           hides it once someone is signed in. -->
+      <div class="empty-state" id="auth-cta" style="max-width:640px;margin:56px auto 0">
         <div class="empty-icon" aria-hidden="true" data-ico="search"></div>
         <h3>Ready to get started?</h3>
         <p>Create a free account and report or claim your first item in minutes.</p>

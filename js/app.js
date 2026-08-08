@@ -609,6 +609,16 @@ function canLogin(user) {
   return user && user.status === "active";
 }
 
+/* Page CTAs that only make sense for logged-out visitors (e.g. the
+   "Ready to get started?" box on How It Works) — hidden once signed in.
+   Runs instantly from the cached profile, then again after hydration so
+   stale/expired sessions are corrected. */
+function updateAuthCTA() {
+  const el = document.getElementById("auth-cta");
+  if (!el) return;
+  el.style.display = currentUser() ? "none" : "";
+}
+
 /* ---------------- Notifications ---------------- */
 function addNotification(userId, title, message) {
   Store.insert("notifications", {
@@ -1157,8 +1167,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /* Render the shell immediately (no blank flash while data loads), then
      re-render after hydration so the session-aware parts update. */
   renderNav();
+  updateAuthCTA();
   whenReady(() => {
     renderNav();
+    updateAuthCTA();
     handleAuthRedirect();
   });
 });
