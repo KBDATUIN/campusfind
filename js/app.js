@@ -168,12 +168,13 @@ const Store = {
   init() {
     this.ready = (async () => {
       try {
-        /* Resolve config.js relative to app.js itself so it works from any
-           folder depth and on subpath deployments (e.g. GitHub Pages). */
+        /* Resolve config.js relative to app.js's own folder (the js/ dir) so
+           it works from any page depth and subpath deployments. */
         let cfgPath = "js/config.js";
         const appScript = document.querySelector('script[src*="app.js"]');
         if (appScript && appScript.src) {
-          cfgPath = new URL("js/config.js", appScript.src).href;
+          const dir = appScript.src.substring(0, appScript.src.lastIndexOf("/") + 1);
+          cfgPath = new URL("config.js", dir).href;
         }
         await loadScript(cfgPath);
         if (!window.CAMPUSFIND_CONFIG || !window.CAMPUSFIND_CONFIG.supabaseUrl || !window.CAMPUSFIND_CONFIG.supabaseAnonKey) {
@@ -205,9 +206,11 @@ const Store = {
       const profile = this.get("users", session.user.id);
       if (profile && profile.status === "active") {
         localStorage.setItem(this.SESSION_KEY, session.user.id);
+        setRoleCookie(profile);
       } else {
         await this.client.auth.signOut();
         localStorage.removeItem(this.SESSION_KEY);
+        setRoleCookie(null);
       }
     }
     this.client.auth.onAuthStateChange((event, nextSession) => {
@@ -217,6 +220,7 @@ const Store = {
         const profile = this.data.users.find((u) => u.id === nextSession.user.id);
         if (profile) {
           localStorage.setItem(this.SESSION_KEY, nextSession.user.id);
+          setRoleCookie(profile);
         } else {
           /* Brand-new account (e.g. just confirmed via email) — fetch its profile. */
           this.client
@@ -433,8 +437,24 @@ function clearSession() {
 function logout() {
   if (Store.client) Store.client.auth.signOut().catch(() => {});
   clearSession();
+  setRoleCookie(null);
   const isAdmin = window.location.pathname.includes("/admin/");
   window.location.href = isAdmin ? "../index.html" : "index.html";
+}
+
+/* A convenience cookie (cf_role) lets Vercel middleware gate the /admin/*
+   pages. It is NOT the security layer — Supabase Row Level Security is.
+   This only stops casual visitors from ever seeing the admin files. */
+function setRoleCookie(user) {
+  try {
+    const role = user ? user.role : "";
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    if (role === "admin" || role === "staff") {
+      document.cookie = "cf_role=" + role + "; path=/; max-age=2592000; SameSite=Lax" + secure;
+    } else {
+      document.cookie = "cf_role=; path=/; max-age=0; SameSite=Lax" + secure;
+    }
+  } catch (e) { /* cookies unavailable — middleware will simply redirect */ }
 }
 
 function requireAuth() {

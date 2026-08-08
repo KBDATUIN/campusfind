@@ -83,6 +83,26 @@ values ('00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticate
         '{"full_name":"Jane Staff","school_id":"STF-200"}', now(), now());
 ```
 
+## Hiding the admin panel
+
+The `admin/` pages are protected by **two layers**:
+
+1. **The real security — Supabase Row Level Security.** Admin pages render
+   nothing useful without a valid staff/admin session, and the database
+   rejects any request from a student or anonymous visitor. Even if someone
+   downloaded the admin HTML, they could not see or change a thing.
+2. **Vercel middleware (`middleware.js`).** Runs on the edge before any
+   file is served and redirects everyone without a staff/admin session
+   cookie away from `/admin/*`. To casual visitors the admin panel simply
+   does not exist.
+
+A note on static hosting: files in a static deployment can never be truly
+"hidden" — anyone who guesses a URL can download the raw HTML/JS. That is
+fine here because those files contain **no secrets and no data**. Security
+lives in the database, not in the folder structure. (On Netlify you can
+approximate this with redirect rules or a Netlify Function; the middleware
+here is Vercel-specific.)
+
 ## Recommended settings before launch
 
 - **Authentication → Providers → Email:** keep password sign-in enabled.

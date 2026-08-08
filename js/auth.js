@@ -104,6 +104,7 @@ function initRegister() {
 
         if (data.session) {
           setSession(profileObj);
+          setRoleCookie(profileObj);
           localStorage.setItem("campusfind_auth_skip", "1");
           addNotification(profileObj.id, "Welcome to CampusFind!", "Your account has been created. Report lost items or claim found ones anytime.");
           toast("Account created successfully. Welcome to CampusFind!", "success");
@@ -195,6 +196,7 @@ function initLogin() {
     else localStorage.removeItem("campusfind_remember");
 
     setSession(profile);
+    setRoleCookie(profile);
     localStorage.setItem("campusfind_auth_skip", "1");
     toast("Welcome back, " + profile.fullName.split(" ")[0] + "!", "success");
 
