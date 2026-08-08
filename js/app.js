@@ -122,6 +122,7 @@ const Store = {
   client: null,
   data: { users: [], items: [], claims: [], contacts: [], notifications: [], activityLogs: [], settings: [] },
   bootError: null,
+  failedTables: {},
   ready: null,
 
   TABLE_OF: {
@@ -192,11 +193,26 @@ const Store = {
 
   async hydrate() {
     const tables = this.TABLE_OF;
-    for (const coll of Object.keys(tables)) {
-      const { data, error } = await this.client.from(tables[coll]).select("*");
-      if (error) throw error;
-      this.data[coll] = (data || []).map((r) => this.dbToObj(coll, r));
-    }
+    this.failedTables = {};
+    /* Fetch every collection in parallel. A single missing or unreadable
+       table (e.g. item_contacts hasn't been created by schema.sql yet)
+       must not take down the whole app — that collection just stays empty
+       and is recorded in failedTables for the warning in whenReady(). */
+    await Promise.all(
+      Object.keys(tables).map(async (coll) => {
+        try {
+          const { data, error } = await this.client.from(tables[coll]).select("*");
+          if (error) throw error;
+          this.data[coll] = (data || []).map((r) => this.dbToObj(coll, r));
+        } catch (err) {
+          /* Missing/unreadable table OR a transient network error — keep
+             the app alive, leave the collection empty, and surface a hint. */
+          this.failedTables[coll] = err.message || String(err);
+          console.error("CampusFind: could not load '" + tables[coll] + "':", err.message || err);
+          this.data[coll] = [];
+        }
+      })
+    );
   },
 
   async restoreSession() {
@@ -348,9 +364,21 @@ async function initSupabaseClient(cfg) {
 /* Run fn once the store has been hydrated (or after a boot failure). */
 function whenReady(fn) {
   Store.ready.then(() => {
-    if (Store.bootError && !whenReady._warned) {
+    if (!whenReady._warned) {
       whenReady._warned = true;
-      toast(Store.bootError, "error");
+      if (Store.bootError) {
+        toast(Store.bootError, "error");
+      } else {
+        const failed = Object.keys(Store.failedTables || {});
+        if (failed.length) {
+          const names = failed.map((c) => Store.TABLE_OF[c]).join(", ");
+          console.warn("CampusFind: unreadable tables:", Store.failedTables);
+          toast(
+            "Could not load: " + names + ". Run supabase/schema.sql in your Supabase SQL editor, then reload the page.",
+            "warning"
+          );
+        }
+      }
     }
     fn();
   });

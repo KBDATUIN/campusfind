@@ -171,3 +171,14 @@ policies in `schema.sql`. The `service_role` key must NEVER be exposed.
 **Why can't staff sign up through the register page?** Self-signup always
 creates student accounts to prevent privilege escalation. Staff/admin
 accounts are created by the office (see above).
+
+**The app says "Could not find the table 'public.item_contacts' in the
+schema cache" — what now?** The database is missing a table the app
+expects. This usually happens when `schema.sql` was run on the project
+before a newer version of it (that added `item_contacts`) was released,
+or when the SQL editor stopped partway through. Fix: open the Supabase
+**SQL Editor**, paste the entire current
+[`supabase/schema.sql`](supabase/schema.sql), and click **Run**. It is
+idempotent (safe to re-run), creates any missing tables, migrates older
+`items.contact_info` data into `item_contacts`, and reloads PostgREST's
+schema cache so the app picks everything up immediately.

@@ -1,19 +1,19 @@
 -- ============================================================
--- CampusFind — Supabase schema
+-- CampusFind - Supabase schema
 -- ============================================================
--- How to run: Supabase dashboard → SQL Editor → paste this file → Run.
+-- How to run: Supabase dashboard -> SQL Editor -> paste this file -> Run.
 -- It is safe to run more than once (idempotent).
 --
 -- What it creates:
---   • Tables: users, items, claims, notifications, activity_logs,
+--   * Tables: users, items, claims, notifications, activity_logs,
 --     settings, counters
---   • Row Level Security so students/staff/admins/visitors each get
+--   * Row Level Security so students/staff/admins/visitors each get
 --     exactly the data they are allowed to see
---   • A trigger that auto-creates a public profile when someone signs up
---   • RPC functions: next_counter (sequential IDs), admin_delete_user,
+--   * A trigger that auto-creates a public profile when someone signs up
+--   * RPC functions: next_counter (sequential IDs), admin_delete_user,
 --     reset_demo_data
---   • A public storage bucket for item photos
---   • Demo accounts
+--   * A public storage bucket for item photos
+--   * Demo accounts
 -- ============================================================
 
 create extension if not exists pgcrypto;
@@ -107,7 +107,7 @@ create table if not exists public.settings (
 );
 insert into public.settings (id) values (1) on conflict (id) do nothing;
 
--- Sequential counters used for human-readable report/claim IDs (LF-2026-0001…)
+-- Sequential counters used for human-readable report/claim IDs (LF-2026-0001...)
 create table if not exists public.counters (
   name text primary key,
   value bigint not null default 0
@@ -115,7 +115,7 @@ create table if not exists public.counters (
 
 /* ---------------- Auth trigger: profile auto-creation ---------------- */
 -- When anyone signs up (or is created), a public profile row is created.
--- Self-signups are ALWAYS students — roles are only assigned by staff/admin.
+-- Self-signups are ALWAYS students - roles are only assigned by staff/admin.
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -315,7 +315,7 @@ create policy "settings_delete_staff" on public.settings for delete
 
 /* ---------------- RPC functions ---------------- */
 
--- Sequential, collision-safe reference IDs (LF-2026-0001, CL-2026-0001, …)
+-- Sequential, collision-safe reference IDs (LF-2026-0001, CL-2026-0001, ...)
 create or replace function public.next_counter(cname text)
 returns bigint
 language plpgsql
@@ -398,7 +398,7 @@ create policy "item_images_auth_delete" on storage.objects
 
 /* ---------------- Seed: demo accounts ----------------
    IMPORTANT: change these passwords after first login, or via
-   Authentication → Users in the Supabase dashboard.
+   Authentication -> Users in the Supabase dashboard.
    Profiles are created automatically by the trigger above.
    ============================================================ */
 
@@ -416,7 +416,7 @@ on conflict (id) do nothing;
 
 -- GoTrue cannot scan NULL token columns (e.g. confirmation_token) during
 -- login. Direct inserts above set them to '', and this backfills any rows
--- that already exist with NULLs (idempotent — safe to run any time).
+-- that already exist with NULLs (idempotent - safe to run any time).
 update auth.users
 set confirmation_token = coalesce(confirmation_token, ''),
     recovery_token = coalesce(recovery_token, ''),
@@ -433,14 +433,28 @@ update public.users set status = 'suspended' where id = '00000000-0000-4000-8000
 
 
 -- ============================================================
--- One-time migration for existing installations (ran against a database
--- that already had contact_info on public.items):
---   Prior versions stored contact info directly on the items table, which
---   meant any authenticated visitor could read it via RLS. Fresh installs
---   skip this (the column no longer exists). Existing databases must run:
---
---   insert into public.item_contacts (item_id, contact_info)
---     select id, contact_info from public.items
---     where contact_info is not null and contact_info <> '';
---   alter table public.items drop column if exists contact_info;
+-- Auto-migration for existing installations
+-- ============================================================
+-- Older versions stored contact info directly on the items table, which
+-- meant any authenticated visitor could read it via RLS. If the column
+-- still exists, its values are moved into the private item_contacts table
+-- and the old column is dropped. Safe & idempotent - the column check
+-- makes this a no-op on fresh installs.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'items' and column_name = 'contact_info'
+  ) then
+    insert into public.item_contacts (item_id, contact_info)
+      select id, contact_info from public.items
+      where contact_info is not null and contact_info <> '';
+    alter table public.items drop column contact_info;
+  end if;
+end $$;
+
+-- Reload PostgREST's schema cache so the API immediately sees any tables
+-- created by this script. Prevents startup errors like:
+--   Could not find the table 'public.item_contacts' in the schema cache
+notify pgrst, 'reload schema';
 -- ============================================================

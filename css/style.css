@@ -1419,6 +1419,19 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 .empty-state h3 { margin-bottom: 6px; }
 .empty-state p { color: var(--text-muted); margin-bottom: 18px; }
 
+/* Empty state inside the lost/found listing grids: stretch across every
+   column and center the content in the middle of the page instead of
+   leaving it pinned to the top-left corner cell. */
+#items-grid > .empty-state {
+  grid-column: 1 / -1;
+  min-height: 45vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 /* ============ CONFIRMATION ============ */
 .confirm-page { max-width: 620px; margin: 0 auto; padding: 48px 20px; text-align: center; }
 .confirm-check {
