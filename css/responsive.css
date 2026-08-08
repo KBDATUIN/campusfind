@@ -161,9 +161,22 @@ body {
   .profile-summary { padding: 16px 18px; }
   .profile-chips { margin-left: 0; }
 
-  /* Page hero card */
-  .page-head { padding: 30px 0 26px; }
-  .page-head > .container { border-radius: 18px; padding: 28px 22px; }
+  /* Page hero card — inset from the screen edges like the dashboard hero.
+     (.page-head > .container overrides .container's side padding, so on
+     mobile it must set its own margins or it stretches edge-to-edge.) */
+  .page-head { padding: 26px 0 22px; }
+  .page-head > .container {
+    width: auto;
+    margin: 0 16px;
+    border-radius: 18px;
+    padding: 26px 20px;
+    /* Proportionally-sized highlights (mirrors the dashboard hero) so the
+       gradient never stretches across a narrow card */
+    background:
+      radial-gradient(420px 210px at 88% -60px, rgba(255, 255, 255, 0.32), transparent 62%),
+      radial-gradient(300px 190px at -50px 130%, rgba(30, 27, 75, 0.26), transparent 60%),
+      var(--page-hero-bg);
+  }
   .page-head h1 { font-size: 24px; }
   .page-head p { font-size: 14px; }
 
@@ -230,7 +243,7 @@ body {
   .dash-search .btn { flex: 1; }
 
   .page-head { padding: 22px 0 20px; }
-  .page-head > .container { border-radius: 16px; padding: 24px 18px; }
+  .page-head > .container { border-radius: 16px; margin: 0 14px; padding: 24px 18px; }
   .page-head h1 { font-size: 22px; }
   .page-eyebrow { font-size: 10.5px; padding: 4px 10px; }
 
@@ -294,7 +307,7 @@ body {
   .stat-card .num { font-size: 19px; }
   .stat-icon { width: 40px; height: 40px; font-size: 16px; }
 
-  .page-head > .container { padding: 22px 16px; }
+  .page-head > .container { margin: 0 12px; padding: 22px 16px; }
   .form-card { padding: 18px 14px; }
   .details-panel { padding: 16px 14px; }
   .details-img { height: 230px; }
