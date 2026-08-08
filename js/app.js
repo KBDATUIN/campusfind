@@ -721,6 +721,11 @@ function renderNav() {
   const nav = document.getElementById("global-nav");
   if (!nav) return;
 
+  /* If the shell is re-rendered (e.g. after data hydration), keep any page
+     content that was already moved into the frame. */
+  const previousFrame = nav.querySelector(".site-main-content");
+  const preserved = previousFrame ? Array.from(previousFrame.children) : [];
+
   const user = currentUser();
   const page = document.body.getAttribute("data-page") || "";
   const isAuthPage = ["login", "register"].includes(page);
@@ -857,6 +862,14 @@ function renderNav() {
   }
   updateSidebarToggle();
   mountSiteFrame();
+
+  /* Restore content preserved across a re-render (hydration refresh),
+     and skip the entrance animation so it doesn't replay. */
+  const frameBox = nav.querySelector(".site-main-content");
+  if (frameBox && preserved.length) {
+    frameBox.classList.add("no-anim");
+    preserved.forEach((el) => frameBox.appendChild(el));
+  }
 }
 
 /* Move the page's own content (everything up to the footer) inside the
@@ -932,6 +945,23 @@ document.addEventListener("click", (e) => {
   if (!e.target.closest(".notif-panel") && !e.target.closest(".bell-btn")) {
     document.querySelectorAll(".notif-panel.open").forEach((p) => p.classList.remove("open"));
   }
+});
+
+/* Smooth page transitions: fade out the frame before leaving to another
+   page via a normal .html link, then fade in on arrival (see CSS). */
+document.addEventListener("click", (e) => {
+  const link = e.target.closest ? e.target.closest('a[href*=".html"]') : null;
+  if (!link) return;
+  if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  if (link.target === "_blank" || link.hasAttribute("download")) return;
+  const href = link.getAttribute("href") || "";
+  if (/^(https?:|mailto:|tel:|javascript:|#|\/\/)/.test(href)) return;
+  const frame = document.querySelector(".site-frame");
+  if (!frame || frame.classList.contains("page-leaving") || e.defaultPrevented) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  e.preventDefault();
+  frame.classList.add("page-leaving");
+  setTimeout(() => { window.location.href = href; }, 160);
 });
 
 function refreshBell() {
@@ -1080,6 +1110,9 @@ Store.init();
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(getTheme());
   hydrateIcons();
+  /* Render the shell immediately (no blank flash while data loads), then
+     re-render after hydration so the session-aware parts update. */
+  renderNav();
   whenReady(() => {
     renderNav();
     handleAuthRedirect();

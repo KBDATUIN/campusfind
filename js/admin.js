@@ -5,6 +5,20 @@
    ============================================================ */
 "use strict";
 
+/* Show a lightweight loading placeholder immediately so admin pages never
+   appear blank while the store hydrates from Supabase. */
+(function () {
+  const shell = document.getElementById("admin-shell");
+  if (shell && !shell.innerHTML.trim()) {
+    shell.innerHTML = `
+      <div class="admin-boot-loading">
+        <div class="skeleton skeleton-stat" style="max-width:560px;margin:48px auto 16px"></div>
+        <div class="skeleton skeleton-row" style="max-width:560px;margin:0 auto 12px"></div>
+        <div class="skeleton skeleton-row" style="max-width:560px;margin:0 auto 12px"></div>
+      </div>`;
+  }
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.body.getAttribute("data-page") || "";
   if (!page.startsWith("admin-")) return;
