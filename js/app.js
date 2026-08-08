@@ -863,11 +863,9 @@ function renderNav() {
   updateSidebarToggle();
   mountSiteFrame();
 
-  /* Restore content preserved across a re-render (hydration refresh),
-     and skip the entrance animation so it doesn't replay. */
+  /* Restore content preserved across a re-render (hydration refresh). */
   const frameBox = nav.querySelector(".site-main-content");
   if (frameBox && preserved.length) {
-    frameBox.classList.add("no-anim");
     preserved.forEach((el) => frameBox.appendChild(el));
   }
 }
@@ -947,22 +945,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* Smooth page transitions: fade out the frame before leaving to another
-   page via a normal .html link, then fade in on arrival (see CSS). */
-document.addEventListener("click", (e) => {
-  const link = e.target.closest ? e.target.closest('a[href*=".html"]') : null;
-  if (!link) return;
-  if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-  if (link.target === "_blank" || link.hasAttribute("download")) return;
-  const href = link.getAttribute("href") || "";
-  if (/^(https?:|mailto:|tel:|javascript:|#|\/\/)/.test(href)) return;
-  const frame = document.querySelector(".site-frame");
-  if (!frame || frame.classList.contains("page-leaving") || e.defaultPrevented) return;
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  e.preventDefault();
-  frame.classList.add("page-leaving");
-  setTimeout(() => { window.location.href = href; }, 160);
-});
 
 function refreshBell() {
   const user = currentUser();

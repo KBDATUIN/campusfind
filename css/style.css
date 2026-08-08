@@ -1513,31 +1513,5 @@ body.site-layout.side-collapsed > footer { margin-left: 84px; }
 /* Utility visibility for JS-driven elements */
 .hidden { display: none !important; }
 
-/* ---------------- Page transitions ---------------- */
-.site-main-content {
-  animation: cf-page-in 0.35s ease both;
-}
-
-.site-main-content.no-anim {
-  animation: none;
-}
-
-@keyframes cf-page-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-
-.site-frame.page-leaving {
-  animation: cf-page-out 0.15s ease both;
-}
-
-@keyframes cf-page-out {
-  to { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-main-content,
-  .site-frame.page-leaving {
-    animation: none !important;
-  }
-}
+/* Page changes are intentionally instant (no entrance/exit animations) —
+   the sidebar stays put like a desktop app while content swaps directly. */
