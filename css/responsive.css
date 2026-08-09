@@ -163,8 +163,15 @@ body {
 
   .cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
   .item-card-img { height: 150px; }
-  .filter-row { flex-direction: column; align-items: stretch; }
-  .filter-row .form-group { min-width: 0; }
+  /* Filter fields stack full-width on mobile, but the Search / Clear
+     Filters action buttons stay side-by-side on one row with balanced
+     widths (flex 1 1 100% fields + flex 1 1 calc(50% - 6px) buttons
+     with the shared 12px gap = two equal buttons on one line). */
+  /* .search-grow is listed explicitly: its desktop rule (flex: 2;
+     min-width: 220px) has higher specificity, so without this it would
+     dodge the full-row stacking and could overflow on narrow screens. */
+  .filter-row .form-group,
+  .filter-row .form-group.search-grow { flex: 1 1 100%; min-width: 0; }
   .filter-bar { padding: 14px; margin-bottom: 18px; }
   .results-info { flex-wrap: wrap; gap: 8px; }
   .dash-bar { padding: 12px; }
@@ -230,9 +237,9 @@ body {
   .form-group input, .form-group select, .form-group textarea,
   .dash-search input { min-height: 46px; }
 
-  /* Even, balanced filter action buttons (filter-row is column here,
-     so size by width — flex-basis would affect height) */
-  .filter-row .btn { width: calc(50% - 6px); }
+  /* Even, balanced filter action buttons — half-width each on one row
+     (flex sizing, not width, so they share the line with the 12px gap). */
+  .filter-row .btn { flex: 1 1 calc(50% - 6px); width: auto; }
 
   /* Compact mobile topbar: hamburger + title + bell only.
      Desktop-only controls (theme toggle, avatar) move into the drawer. */
