@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Admin Module
+   FindBack — Admin Module
    (dashboard stats & charts, report verification, claims
    management, user management, activity logs, settings)
    ============================================================ */
@@ -71,7 +71,7 @@ function renderAdminShell(admin, page) {
       <aside class="site-sidebar" id="site-sidebar">
         <div class="sidebar-head">
           <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleNav()" aria-label="Collapse sidebar" aria-expanded="true" title="Collapse sidebar"><span class="chev chev-left" aria-hidden="true">${ICONS.menu}</span><span class="chev chev-right" aria-hidden="true">${ICONS.menu}</span></button>
-          <div class="brand-name">Campus<em>Find</em></div>
+          <div class="brand-name">Find<em>Back</em></div>
           <button class="sidebar-close" onclick="closeNav()" aria-label="Close menu" title="Close menu">${ICONS.close}</button>
         </div>
         <nav class="site-nav" aria-label="Admin navigation">
@@ -111,7 +111,7 @@ function renderAdminShell(admin, page) {
         <div class="site-main-content">
           <main class="admin-content"></main>
         </div>
-        <footer class="admin-footer">&copy; <span id="admin-year"></span> CampusFind &mdash; School Lost &amp; Found System. All rights reserved.</footer>
+        <footer class="admin-footer">&copy; <span id="admin-year"></span> FindBack &mdash; School Lost &amp; Found System. All rights reserved.</footer>
       </div>
     </div>`;
 
@@ -823,7 +823,7 @@ function suspendUser(id) {
       Store.update("users", id, { status: "suspended" });
       const admin = currentUser();
       if (admin) logActivity(admin.id, "Suspended user", u.email);
-      addNotification(id, "Account Suspended", "Your CampusFind account has been suspended. Contact the school office for assistance.");
+      addNotification(id, "Account Suspended", "Your FindBack account has been suspended. Contact the school office for assistance.");
       toast("User suspended.", "warning");
       reloadAdminTable();
     },
@@ -837,7 +837,7 @@ function activateUser(id) {
   Store.update("users", id, { status: "active" });
   const admin = currentUser();
   if (admin) logActivity(admin.id, "Activated user", u.email);
-  addNotification(id, "Account Reactivated", "Your CampusFind account has been reactivated. Welcome back!");
+  addNotification(id, "Account Reactivated", "Your FindBack account has been reactivated. Welcome back!");
   toast("User activated.", "success");
   reloadAdminTable();
 }
@@ -906,14 +906,14 @@ function initAdminSettings(admin) {
   const form = document.getElementById("settings-form");
   if (!form) return;
   const current = (Store.data.settings && Store.data.settings[0]) || {};
-  form["siteName"].value = current.siteName || "CampusFind";
+  form["siteName"].value = current.siteName || "FindBack";
   form["contactEmail"].value = current.contactEmail || "";
   form["autoMatch"].checked = current.autoMatch !== false;
   form["notifyFinders"].checked = current.notifyFinders !== false;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const siteName = sanitizeInput(form["siteName"].value) || "CampusFind";
+    const siteName = sanitizeInput(form["siteName"].value) || "FindBack";
     const contactEmail = sanitizeInput(form["contactEmail"].value);
     try {
       await Store.saveSettings({

@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Items (listings, search/filter/sort, details,
+   FindBack — Items (listings, search/filter/sort, details,
    report forms, matching)
    ============================================================ */
 "use strict";

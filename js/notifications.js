@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Notifications
+   FindBack — Notifications
    Dropdown lives in the global nav (rendered by app.js).
    This file adds the dashboard feed + live badge refresh.
    ============================================================ */

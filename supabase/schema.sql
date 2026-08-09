@@ -1,5 +1,5 @@
 -- ============================================================
--- CampusFind - Supabase schema
+-- FindBack - Supabase schema
 -- ============================================================
 -- How to run: Supabase dashboard -> SQL Editor -> paste this file -> Run.
 -- It is safe to run more than once (idempotent).
@@ -100,7 +100,7 @@ create table if not exists public.activity_logs (
 
 create table if not exists public.settings (
   id int primary key default 1,
-  site_name text not null default 'CampusFind',
+  site_name text not null default 'FindBack',
   contact_email text not null default '',
   auto_match boolean not null default true,
   notify_finders boolean not null default true

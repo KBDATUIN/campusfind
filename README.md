@@ -1,4 +1,4 @@
-# CampusFind — School Lost & Found System
+# FindBack — School Lost & Found System
 
 A static HTML/CSS/vanilla-JS lost & found portal backed by **Supabase**
 (Postgres database + Auth + Storage). No build step — upload the files to

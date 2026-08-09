@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Vercel Edge Middleware
+   FindBack — Vercel Edge Middleware
    ============================================================
    Runs server-side on Vercel BEFORE any static file is served.
 

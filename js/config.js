@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Supabase configuration
+   FindBack — Supabase configuration
    ============================================================
    Paste your Supabase project credentials below before deploying.
 

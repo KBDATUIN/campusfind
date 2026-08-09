@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Core Application (data layer, helpers, UI shell)
+   FindBack — Core Application (data layer, helpers, UI shell)
    All storage goes through the Store object so it can later be
    swapped for a real backend/API.
    ============================================================ */
@@ -183,7 +183,7 @@ const Store = {
         await this.restoreSession();
       } catch (e) {
         this.bootError = e.message || String(e);
-        console.error("CampusFind boot error:", e);
+        console.error("FindBack boot error:", e);
       } finally {
         this.hydrated = true;
       }
@@ -208,7 +208,7 @@ const Store = {
           /* Missing/unreadable table OR a transient network error — keep
              the app alive, leave the collection empty, and surface a hint. */
           this.failedTables[coll] = err.message || String(err);
-          console.error("CampusFind: could not load '" + tables[coll] + "':", err.message || err);
+          console.error("FindBack: could not load '" + tables[coll] + "':", err.message || err);
           this.data[coll] = [];
         }
       })
@@ -372,7 +372,7 @@ function whenReady(fn) {
         const failed = Object.keys(Store.failedTables || {});
         if (failed.length) {
           const names = failed.map((c) => Store.TABLE_OF[c]).join(", ");
-          console.warn("CampusFind: unreadable tables:", Store.failedTables);
+          console.warn("FindBack: unreadable tables:", Store.failedTables);
           toast(
             "Could not load: " + names + ". Run supabase/schema.sql in your Supabase SQL editor, then reload the page.",
             "warning"
@@ -392,7 +392,7 @@ function handleAuthRedirect() {
   if (!ev) return;
 
   if (ev === "signup") {
-    toast("Email confirmed! Welcome to CampusFind.", "success");
+    toast("Email confirmed! Welcome to FindBack.", "success");
     if (!/dashboard\.html$/.test(window.location.pathname)) {
       setTimeout(() => { window.location.href = "dashboard.html"; }, 1400);
     }
@@ -809,7 +809,7 @@ function renderNav() {
       <div class="navbar-inner container">
         <a href="index.html" class="brand">
           <span class="brand-icon" aria-hidden="true">${ICONS.search}</span>
-          <span>Campus<em>Find</em></span>
+          <span>Find<em>Back</em></span>
         </a>
         <div class="nav-actions">
           ${themeBtn}
@@ -835,7 +835,7 @@ function renderNav() {
     "report-lost": "Report a Lost Item",
     "report-found": "Report a Found Item",
   };
-  const pageTitle = pageTitles[page] || "CampusFind";
+  const pageTitle = pageTitles[page] || "FindBack";
 
   const navItems = [
     { page: "home", href: "index.html", icon: ICONS.home, label: "Home" },
@@ -897,7 +897,7 @@ function renderNav() {
       <aside class="site-sidebar" id="site-sidebar">
         <div class="sidebar-head">
           <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleNav()" aria-label="Collapse sidebar" aria-expanded="true" title="Collapse sidebar"><span class="chev chev-left" aria-hidden="true">${ICONS.menu}</span><span class="chev chev-right" aria-hidden="true">${ICONS.menu}</span></button>
-          <div class="brand-name">Campus<em>Find</em></div>
+          <div class="brand-name">Find<em>Back</em></div>
           <button class="sidebar-close" onclick="closeNav()" aria-label="Close menu" title="Close menu">${ICONS.close}</button>
         </div>
         <nav class="site-nav" aria-label="Primary navigation">

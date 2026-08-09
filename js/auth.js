@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Authentication (login / register / logout)
+   FindBack — Authentication (login / register / logout)
    Backed by Supabase Auth — passwords are hashed with bcrypt
    server-side and never touch the client.
    ============================================================ */
@@ -106,8 +106,8 @@ function initRegister() {
           setSession(profileObj);
           setRoleCookie(profileObj);
           localStorage.setItem("campusfind_auth_skip", "1");
-          addNotification(profileObj.id, "Welcome to CampusFind!", "Your account has been created. Report lost items or claim found ones anytime.");
-          toast("Account created successfully. Welcome to CampusFind!", "success");
+          addNotification(profileObj.id, "Welcome to FindBack!", "Your account has been created. Report lost items or claim found ones anytime.");
+          toast("Account created successfully. Welcome to FindBack!", "success");
           setTimeout(() => {
             window.location.href = "dashboard.html";
           }, 900);

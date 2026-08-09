@@ -1,5 +1,5 @@
 /* ============================================================
-   CampusFind — Responsive Styles (mobile-first polish)
+   FindBack — Responsive Styles (mobile-first polish)
    Breakpoints: <=1100 drawer / <=992 tablet / <=768 mobile / <=480 phones
    ============================================================ */
 
@@ -118,7 +118,7 @@ body {
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .dash-wrap { padding-left: 16px; padding-right: 16px; }
-  .page-body { padding: 24px 16px 64px; }
+  .page-body { padding: 24px 0 64px; }
 
   /* Single-column stacking per requirements (<768px): greeting card,
      profile card, stat cards and quick links all stack cleanly */
@@ -180,6 +180,12 @@ body {
   .page-head h1 { font-size: 24px; }
   .page-head p { font-size: 14px; }
 
+  /* Home dashboard: responsive .container would otherwise strip the vertical
+     padding (cascade order), collapsing the top gap vs. the other pages.
+     The image hero keeps the same fixed height on every page. */
+  .home-dash { padding: 24px 0 0; }
+  .page-head-img > .container { min-height: 177px; }
+
   .confirm-page { padding: 32px 16px; }
   .confirm-check { width: 72px; height: 72px; font-size: 34px; }
 
@@ -219,7 +225,7 @@ body {
 @media (max-width: 480px) {
   .container { padding: 0 14px; }
   .dash-wrap { padding-left: 14px; padding-right: 14px; }
-  .page-body { padding: 22px 14px 52px; }
+  .page-body { padding: 22px 0 52px; }
 
   .stats-grid { gap: 10px; }
   .auth-card { padding: 26px 18px; border-radius: 18px; }
@@ -246,6 +252,9 @@ body {
   .page-head > .container { border-radius: 16px; margin: 0 14px; padding: 24px 18px; }
   .page-head h1 { font-size: 22px; }
   .page-eyebrow { font-size: 10.5px; padding: 4px 10px; }
+
+  .home-dash { padding: 22px 0 0; }
+  .page-head-img > .container { min-height: 190px; }
 
   .header-title { font-size: 14px; max-width: 34vw; }
   .header-left { gap: 8px; }
@@ -291,6 +300,11 @@ body {
 /* Narrow phones (iPhone SE / small Android) */
 @media (max-width: 360px) {
   .container { padding: 0 12px; }
+  /* Same guard as the 768/480 blocks: this .container rule (later in source
+     order) would otherwise strip the vertical padding of .page-body and the
+     home dashboard, collapsing the top gap on every page at this width. */
+  .page-body { padding: 22px 0 52px; }
+  .home-dash { padding: 22px 0 0; }
   .dash-wrap { padding-left: 12px; padding-right: 12px; }
 
   .site-header { gap: 8px; }
