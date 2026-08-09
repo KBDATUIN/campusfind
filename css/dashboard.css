@@ -260,6 +260,7 @@ body[data-page="dashboard"] .notif-row {
   padding: 12px;
   border-radius: 12px;
   position: relative;
+  cursor: pointer;
   transition: background 0.15s ease;
 }
 body[data-page="dashboard"] .notif-row:hover { background: var(--primary-soft); }

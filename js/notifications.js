@@ -32,7 +32,7 @@ function renderNotificationFeed() {
   const body = list.length ? `
     <ul class="notif-list">
       ${list.slice(0, 8).map((n) => `
-        <li class="notif-row ${n.read ? "" : "unread"}">
+        <li class="notif-row ${n.read ? "" : "unread"}" data-notif-id="${esc(n.id)}" title="View notification">
           <span class="notif-row-dot" aria-hidden="true"></span>
           <div class="notif-row-main">
             <div class="notif-row-title">${esc(n.title)}</div>
@@ -47,4 +47,10 @@ function renderNotificationFeed() {
     </div>`;
 
   container.innerHTML = head + body;
+
+  /* Delegated row click — no inline JS, ids stay out of attribute strings. */
+  container.onclick = (e) => {
+    const row = e.target.closest(".notif-row");
+    if (row && row.dataset.notifId) viewNotif(row.dataset.notifId);
+  };
 }

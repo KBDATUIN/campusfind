@@ -1041,7 +1041,7 @@ function renderNotifPanel(panel) {
       <button onclick="markAllRead()">Mark all read</button>
     </div>
     <div class="notif-list">${list.length ? list.map((n) => `
-      <div class="notif-item ${n.read ? "" : "unread"}" onclick="markNotifRead('${n.id}')">
+      <div class="notif-item ${n.read ? "" : "unread"}" data-notif-id="${esc(n.id)}" title="View notification">
         <div class="notif-icon" aria-hidden="true">${ICONS.bell}</div>
         <div>
           <div class="notif-title">${esc(n.title)}</div>
@@ -1050,6 +1050,11 @@ function renderNotifPanel(panel) {
         </div>
       </div>`).join("") : `<div class="notif-empty">No notifications yet</div>`}
     </div>`;
+  /* Delegated row click — no inline JS, ids stay out of attribute strings. */
+  panel.onclick = (e) => {
+    const row = e.target.closest(".notif-item");
+    if (row && row.dataset.notifId) viewNotif(row.dataset.notifId);
+  };
 }
 
 function markNotifRead(id) {
@@ -1068,6 +1073,48 @@ function markAllRead() {
   refreshBell();
   const panel = document.getElementById("notif-panel");
   if (panel && panel.classList.contains("open")) renderNotifPanel(panel);
+}
+
+/* Open a notification in full view (marks it read). Used by the bell
+   dropdown and the dashboard feed. */
+function viewNotif(id) {
+  const user = currentUser();
+  if (!user) return;
+  const n = Store.get("notifications", id);
+  if (!n || n.userId !== user.id) return;
+  markNotifRead(id);
+  /* Close the dropdown behind the modal and keep the dashboard feed's
+     read/unread styling in sync. */
+  document.querySelectorAll(".notif-panel.open").forEach((p) => p.classList.remove("open"));
+  const feed = document.getElementById("notif-feed");
+  if (feed && typeof renderNotificationFeed === "function") renderNotificationFeed();
+  const modal = openModal(`
+    <div data-title="${esc(n.title)}"></div>
+    <div data-body>
+      <div class="notif-detail-time">${esc(fmtDate(n.createdAt, true))}</div>
+      <div class="notif-detail-msg">${esc(n.message)}</div>
+      <div class="confirm-btns">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn btn-danger" id="notif-delete"><span aria-hidden="true">${ICONS.trash}</span> Delete</button>
+      </div>
+    </div>`);
+  modal.querySelector("#notif-delete").addEventListener("click", () => deleteNotif(id));
+}
+
+/* Delete a notification and refresh every notification surface. */
+function deleteNotif(id) {
+  const user = currentUser();
+  if (!user) return;
+  const n = Store.get("notifications", id);
+  if (!n || n.userId !== user.id) return;
+  Store.remove("notifications", id);
+  refreshBell();
+  const panel = document.getElementById("notif-panel");
+  if (panel && panel.classList.contains("open")) renderNotifPanel(panel);
+  const feed = document.getElementById("notif-feed");
+  if (feed && typeof renderNotificationFeed === "function") renderNotificationFeed();
+  closeModal();
+  toast("Notification deleted.", "success");
 }
 
 /* ---------------- Item card / helpers for listings ---------------- */
