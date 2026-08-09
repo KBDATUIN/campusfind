@@ -14,6 +14,20 @@ html {
   overflow-x: clip;
   width: 100%;
   max-width: 100%;
+  /* Reserve the vertical scrollbar gutter on every page (scrollbar-gutter:
+     stable) so short pages like Item Details, Login and the logged-in How
+     It Works render the exact same right edge as long pages. Without it,
+     pages that happen to fit the viewport skip the ~10-15px scrollbar
+     gutter and their container shifts right by that amount — the whole
+     column visibly jumps when switching between pages. */
+  scrollbar-gutter: stable;
+}
+
+/* Older browsers without scrollbar-gutter support (Safari < 18.2, Firefox
+   < 97) fall back to always reserving the track, so the right edge stays
+   consistent there too. Modern browsers keep the trackless `stable` above. */
+@supports not (scrollbar-gutter: stable) {
+  html { overflow-y: scroll; }
 }
 
 /* Kill accidental horizontal scroll from edge-to-edge hero tokens etc. */
@@ -118,7 +132,17 @@ body {
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
   .dash-wrap { padding-left: 16px; padding-right: 16px; }
-  .page-body { padding: 24px 0 64px; }
+  /* Content column shares the hero's 16px side inset: the mobile hero card
+     is inset from the screen edges (margin: 0 16px below), so every section
+     below it — search bar, stat cards, section headings, cards — must sit
+     inside the same outer boundary instead of touching the screen edges. */
+  .page-body { padding: 24px 16px 64px; }
+  /* Item Details: the inner .details-wrap adds its own 20px side padding for
+     its centered reading column, but on mobile the page-body inset (16px)
+     is the shared boundary — so drop the extra padding or the details
+     content would sit 36px from the screen edge while everything else
+     (hero, cards, headings) sits at 16px. */
+  .page-body .details-wrap { padding-left: 0; padding-right: 0; }
 
   /* Single-column stacking per requirements (<768px): greeting card,
      profile card, stat cards and quick links all stack cleanly */
@@ -183,7 +207,7 @@ body {
   /* Home dashboard: responsive .container would otherwise strip the vertical
      padding (cascade order), collapsing the top gap vs. the other pages.
      The image hero keeps the same fixed height on every page. */
-  .home-dash { padding: 24px 0 0; }
+  .home-dash { padding: 24px 16px 0; }
   .page-head-img > .container { min-height: 177px; }
 
   .confirm-page { padding: 32px 16px; }
@@ -225,7 +249,7 @@ body {
 @media (max-width: 480px) {
   .container { padding: 0 14px; }
   .dash-wrap { padding-left: 14px; padding-right: 14px; }
-  .page-body { padding: 22px 0 52px; }
+  .page-body { padding: 22px 14px 52px; }
 
   .stats-grid { gap: 10px; }
   .auth-card { padding: 26px 18px; border-radius: 18px; }
@@ -253,7 +277,7 @@ body {
   .page-head h1 { font-size: 22px; }
   .page-eyebrow { font-size: 10.5px; padding: 4px 10px; }
 
-  .home-dash { padding: 22px 0 0; }
+  .home-dash { padding: 22px 14px 0; }
   .page-head-img > .container { min-height: 190px; }
 
   .header-title { font-size: 14px; max-width: 34vw; }
@@ -303,8 +327,8 @@ body {
   /* Same guard as the 768/480 blocks: this .container rule (later in source
      order) would otherwise strip the vertical padding of .page-body and the
      home dashboard, collapsing the top gap on every page at this width. */
-  .page-body { padding: 22px 0 52px; }
-  .home-dash { padding: 22px 0 0; }
+  .page-body { padding: 22px 12px 52px; }
+  .home-dash { padding: 22px 12px 0; }
   .dash-wrap { padding-left: 12px; padding-right: 12px; }
 
   .site-header { gap: 8px; }
